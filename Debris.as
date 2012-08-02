@@ -4,7 +4,7 @@ package Vortex
 	import Framework.FSprite;
 	import Framework.FG;
 
-	import Framework.Utils.FMath;
+	import Framework.Maths.FMath;
 
 	public class Debris extends FSprite
 	{
@@ -15,6 +15,8 @@ package Vortex
 		private var dist:int;
 		private var speed:Number;
 		private var angle:Number;
+
+		public var collision:FCircle;
 
 		public function Debris(c:Number):void
 		{
@@ -27,12 +29,14 @@ package Vortex
 			radius = Math.round(Math.random() * 5 + 5);
 
 			dist = Math.round(Math.random() * 100 + 100);
-			speed = Math.random() * 2;
+			speed = Math.random() + 0.5;
 			angle = Math.random() * 360;
 
 			var a:Number = FMath.DegreesToRadians(angle);
 			x = (Math.cos(a) * dist) + FG.width/2;
 			y = (Math.sin(a) * dist) + FG.height/2;
+
+			collision = new FCircle(x, y, radius);
 		}
 
 		override public function Update():void
@@ -42,6 +46,9 @@ package Vortex
 			var a:Number = FMath.DegreesToRadians(angle);
 			x = (Math.cos(a) * dist) + FG.width/2;
 			y = (Math.sin(a) * dist) + FG.height/2;
+
+			collision.p.x = x;
+			collision.p.y = y;
 		}
 
 		override public function Draw():void
