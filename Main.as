@@ -7,6 +7,8 @@ package Vortex
 
 	import Framework.*;
 
+	import Vortex.Scenes.*;
+
 	[SWF(width='640',height='480',backgroundColor='#ffffff',frameRate='30')]
 
 	public class Main extends FGame

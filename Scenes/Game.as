@@ -1,4 +1,4 @@
-package Vortex
+package Vortex.Scenes
 {
 
 	import Framework.FScene;
@@ -20,10 +20,11 @@ package Vortex
 	import flash.display.BitmapData;
 	import flash.display.Bitmap;
 
-	public class Game extends FScene
-	{
+	import Vortex.Player;
+	import Vortex.Debris;
 
-		protected var framerate:FText;
+	public class Game extends GeneralScene
+	{
 
 		protected var enemies:FGroup;
 		protected var numEnemies:int;
@@ -39,8 +40,7 @@ package Vortex
 
 		override public function Create():void
 		{
-			framerate = new FText(FG.width - 25, 10, String(FG.framerate));
-			Add(framerate);
+			super.Create();
 
 			enemies = new FGroup();
 			Add(enemies);
@@ -63,7 +63,6 @@ package Vortex
 		override public function Update():void
 		{
 			super.Update();
-			framerate.UpdateText(String(FG.framerate));
 
 			for each(var e:Debris in enemies.members)
 			{

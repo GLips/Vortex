@@ -1,4 +1,4 @@
-package Vortex
+package Vortex.Scenes
 {
 
 	import Framework.FScene;

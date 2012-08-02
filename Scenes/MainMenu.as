@@ -1,4 +1,4 @@
-package Vortex
+package Vortex.Scenes
 {
 
 	import Framework.FScene;
@@ -10,15 +10,17 @@ package Vortex
 	import Framework.Shapes.FRect;
 	import Framework.Utils.FCollide;
 
-	public class MainMenu extends FScene
+	public class MainMenu extends GeneralScene
 	{
-
-		protected var framerate:FText;
 
 		public function MainMenu():void
 		{
-			framerate = new FText(FG.width - 25, 10, String(FG.framerate));
-			Add(framerate);
+			super();
+		}
+
+		override public function Create():void
+		{
+			super.Create();
 
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game");
 			b.onOver = startGame;
@@ -35,8 +37,6 @@ package Vortex
 		override public function Update():void
 		{
 			super.Update();
-
-			framerate.UpdateText(String(FG.framerate));
 		}
 	}
 }
