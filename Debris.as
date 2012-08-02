@@ -18,7 +18,9 @@ package Vortex
 
 		public var collision:FCircle;
 
-		public function Debris(c:Number):void
+		public var isColliding:Boolean;
+
+		public function Debris(c:Number, Dist:Number):void
 		{
 			super();
 			color = c;
@@ -26,10 +28,11 @@ package Vortex
 
 		override public function Create():void
 		{
-			radius = Math.round(Math.random() * 5 + 5);
+			var maxRadius:int = 5;
+			radius = Math.round(Math.random() * (maxRadius - 2) + 2);
 
 			dist = Math.round(Math.random() * 100 + 100);
-			speed = Math.random() + 0.5;
+			speed = Math.random() * 0.75 + 0.25;
 			angle = Math.random() * 360;
 
 			var a:Number = FMath.DegreesToRadians(angle);
@@ -44,21 +47,24 @@ package Vortex
 			angle += speed;
 
 			var a:Number = FMath.DegreesToRadians(angle);
-			x = (Math.cos(a) * dist) + FG.width/2;
-			y = (Math.sin(a) * dist) + FG.height/2;
-
-			collision.p.x = x;
-			collision.p.y = y;
+			collision.p.x = x = (Math.cos(a) * dist) + FG.width/2;
+			collision.p.y = y = (Math.sin(a) * dist) + FG.height/2;
 		}
 
 		override public function Draw():void
 		{
 			graphics.clear();
-			graphics.beginFill(color);
+			if(isColliding)
+			{
+				graphics.beginFill(0xFF0000);
+			}
+			else
+			{
+				graphics.beginFill(color);
+			}
 			graphics.lineStyle(1);
-			graphics.drawCircle(0, 0, radius);
+			graphics.drawCircle(0, 0, radius - 1);
 			graphics.endFill();
-			draws = false;
 		}
 	}
 }

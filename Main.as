@@ -7,14 +7,14 @@ package Vortex
 
 	import Framework.*;
 
-	[SWF(width='800',height='800',backgroundColor='#ffffff',frameRate='30')]
+	[SWF(width='640',height='480',backgroundColor='#ffffff',frameRate='30')]
 
 	public class Main extends FGame
 	{
 
 		public function Main():void
 		{
-			super(this, 800, 800, MainMenu);
+			super(this, 640, 480, MainMenu);
 		}
 	}
 

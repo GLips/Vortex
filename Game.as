@@ -26,6 +26,7 @@ package Vortex
 		protected var framerate:FText;
 
 		protected var enemies:FGroup;
+		protected var numEnemies:int;
 		protected var player:Player;
 
 		protected var bd:BitmapData;
@@ -43,19 +44,20 @@ package Vortex
 
 			enemies = new FGroup();
 			Add(enemies);
-			var c:Number;
+
+			numEnemies = 100;
 
 			player = new Player();
 			Add(player);
 
-			for(var i:int = 0; i < 100; i++)
+			var c:Number;
+			var dist:Number;
+			for(var i:int = 0; i < numEnemies; i++)
 			{
-				c = FColor.RGBtoHEX(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4));
-				enemies.Add(new Debris(c));
+				c = FColor.RGBtoHEX(randColor(i*0.01), randColor(i*0.01 + 2), randColor(i*0.025 + 4));
+				dist = noise(i*0.01);
+				enemies.Add(new Debris(c,dist));
 			}
-
-			var d:FVec = new FVec(new FPoint(0,0), new FPoint(6,8));
-			trace(d.Mag());
 		}
 
 		override public function Update():void
@@ -63,18 +65,28 @@ package Vortex
 			super.Update();
 			framerate.UpdateText(String(FG.framerate));
 
-			for each(var e:Debris in enemies)
+			for each(var e:Debris in enemies.members)
 			{
-				if(FCollide.CircleCircle(player.collision, e.collision))
+				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
 				{
+					e.isColliding = true;
 					FG.SwitchScene(new MainMenu());
+				}
+				else
+				{
+					e.isColliding = false;
 				}
 			}
 		}
 
 		private function randColor(x:Number):int
 		{
-			return Math.round(FNoise.noise(x,x,x) * 255);
+			return Math.round(noise(x) * 255);
+		}
+
+		private function noise(x:Number):Number
+		{
+			return FNoise.noise(x,x,x);
 		}
 	}
 }

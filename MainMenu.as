@@ -2,8 +2,8 @@ package Vortex
 {
 
 	import Framework.FScene;
-	import Framework.GUI.FButton;
 	import Framework.GUI.FText;
+	import Framework.GUI.Buttons.FCircleButton;
 
 	import Framework.FG;
 
@@ -20,7 +20,8 @@ package Vortex
 			framerate = new FText(FG.width - 25, 10, String(FG.framerate));
 			Add(framerate);
 
-			var b:FButton = new FButton(0, 0, "Start Game", startGame);
+			var b:FCircleButton = new FCircleButton(0, 0, "Start Game");
+			b.onOver = startGame;
 			b.x = FG.width/2 - b.width/2;
 			b.y = FG.height/2 - b.height/2;
 			Add(b);
