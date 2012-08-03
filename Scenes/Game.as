@@ -36,7 +36,6 @@ package Vortex.Scenes
 		protected var centerButton:FCircleButton;
 		protected var leftButton:FRectButton;
 		protected var rightButton:FRectButton;
-		protected var buttonWidth:int;
 
 		// Show center button or edge button?
 		protected var useCenterButton:Boolean;
@@ -51,15 +50,17 @@ package Vortex.Scenes
 
 		override public function Create():void
 		{
+			// Keep the bitmap behind everything else
+			bd = new BitmapData(FG.width, FG.height, false, 0xFFFFFF);
+			b = new Bitmap(bd);
+			addChild(b);
+
 			super.Create();
 
 			enemies = new FGroup();
 			Add(enemies);
-
 			player = new Player();
 			Add(player);
-
-			buttonWidth = 20;
 
 			newRound();
 		}
@@ -70,6 +71,7 @@ package Vortex.Scenes
 
 			for each(var e:Debris in enemies.members)
 			{
+				bd.draw(e);
 				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
 				{
 					e.isColliding = true;
@@ -80,6 +82,8 @@ package Vortex.Scenes
 					e.isColliding = false;
 				}
 			}
+
+			b = new Bitmap(bd);
 		}
 
 		private function newRound():void
@@ -104,6 +108,7 @@ package Vortex.Scenes
 				if(roundNum > 1)
 					Remove(centerButton);
 
+				var buttonWidth:int = 20;
 				leftButton = new FRectButton(0, 0, buttonWidth, FG.height);
 				leftButton.onOver = newRound;
 				leftButton.pointToCheck = player.collision.p;
@@ -117,11 +122,12 @@ package Vortex.Scenes
 
 			enemies.Destroy();
 
+			FNoise.seed = Math.random() * 99999999;
 			var c:Number;
 			var dist:Number;
-			for(var i:int = 0; i < roundNum * 10; i++)
+			for(var i:int = 0; i < roundNum * 200; i++)
 			{
-				c = FColor.RGBtoHEX(randColor(i*0.01), randColor(i*0.01 + 2), randColor(i*0.025 + 4));
+				c = FColor.RGBtoHEX(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4));
 				dist = noise(i*0.01);
 				enemies.Add(new Debris(c,dist));
 			}
@@ -132,7 +138,7 @@ package Vortex.Scenes
 
 		private function randColor(x:Number):int
 		{
-			return Math.round(noise(x) * 255);
+			return Math.round(noise(x) * 205) + 50;
 		}
 
 		private function noise(x:Number):Number

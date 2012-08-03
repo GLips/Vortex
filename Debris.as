@@ -29,7 +29,7 @@ package Vortex
 		override public function Create():void
 		{
 			var maxRadius:int = 5;
-			radius = Math.round(Math.random() * (maxRadius - 2) + 2);
+			radius = Math.round(Math.random() * (maxRadius - 3) + 3);
 
 			dist = Math.round(Math.random() * 100 + 100);
 			speed = Math.random() * 0.75 + 0.25;
@@ -44,7 +44,7 @@ package Vortex
 
 		override public function Update():void
 		{
-			angle += speed;
+			angle = (angle + speed) % 360;
 
 			var a:Number = FMath.DegreesToRadians(angle);
 			collision.p.x = x = (Math.cos(a) * dist) + FG.width/2;

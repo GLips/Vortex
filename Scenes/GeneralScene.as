@@ -3,6 +3,8 @@ package Vortex.Scenes
 
 	import Framework.FG;
 	import Framework.FScene;
+	import Framework.FObject;
+	import Framework.FGroup;
 
 	import Framework.GUI.FText;
 
@@ -16,6 +18,9 @@ package Vortex.Scenes
 		protected var frames:int;			// Total frames to average (10)
 		protected var _curFrame:int;		// Next frame to write
 
+		protected var GUI:FGroup;
+		protected var G:FGroup;
+
 		public function GeneralScene()
 		{
 			super();
@@ -25,13 +30,35 @@ package Vortex.Scenes
 		{
 			super.Create();
 
+			G = new FGroup();
+			GUI = new FGroup();
+
+			Add(G);
+			Add(GUI);
+
 			// Set up framerate display
 			framerate = new FText(0, 0, "30.00");
 			avgFramerate = new Array();
 			frames = 30;
 			framerate.x = FG.width - framerate.width;
 			framerate.y = FG.height - framerate.height;
-			Add(framerate);
+			GUI.Add(framerate);
+		}
+
+		override public function Add(o:FObject):FObject
+		{
+			if(o != G && o != GUI)
+				return G.Add(o);
+			else
+				return super.Add(o);
+		}
+
+		override public function Remove(o:FObject, Splice:Boolean = false):FObject
+		{
+			if(o != G && o != GUI)
+				return G.Remove(o, Splice);
+			else
+				return super.Remove(o, Splice);
 		}
 
 		override public function Update():void
