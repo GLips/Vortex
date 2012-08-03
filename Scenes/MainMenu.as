@@ -1,7 +1,10 @@
 package Vortex.Scenes
 {
 
-	import Framework.FScene;
+	import Vortex.Scenes.GeneralScene;
+	import Vortex.Scenes.About;
+	import Vortex.Scenes.Game;
+
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FCircleButton;
 
@@ -24,19 +27,28 @@ package Vortex.Scenes
 
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game");
 			b.onOver = startGame;
-			b.x = FG.width/2 - b.width/2;
-			b.y = FG.height/2 - b.height/2;
+			b.CenterX().CenterY();
 			Add(b);
+
+			var a:FCircleButton = new FCircleButton(0, 0, "About", aboutMenu);
+			a.CenterX().CenterY(100);
+			a.y = FG.height/2 - a.height/2 + 100;
+			Add(a);
 		}
 
-		public function startGame():void
+		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
 		}
 
-		override public function Update():void
+		protected function aboutMenu():void
+		{
+			FG.SwitchScene(new About());
+		}
+
+		/*override public function Update():void
 		{
 			super.Update();
-		}
+		}*/
 	}
 }

@@ -47,7 +47,7 @@ package Vortex
 		override public function Draw():void
 		{
 			graphics.clear();
-			graphics.beginFill(0,0.5);
+			graphics.beginFill(0);
 			graphics.drawCircle(0,0,radius);
 			graphics.endFill();
 			draws = false;
