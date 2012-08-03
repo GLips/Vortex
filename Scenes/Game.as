@@ -9,6 +9,7 @@ package Vortex.Scenes
 	import Framework.FGroup;
 
 	import Framework.Shapes.FRect;
+	import Framework.Shapes.FCircle;
 
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FNoise;
@@ -94,6 +95,7 @@ package Vortex.Scenes
 				centerButton.radius = 50;
 				centerButton.draws = true;
 				centerButton.onOver = newRound;
+				centerButton.pointToCheck = player.collision.p;
 				centerButton.CenterX().CenterY();
 				Add(centerButton);
 			}
@@ -104,10 +106,12 @@ package Vortex.Scenes
 
 				leftButton = new FRectButton(0, 0, buttonWidth, FG.height);
 				leftButton.onOver = newRound;
+				leftButton.pointToCheck = player.collision.p;
 				Add(leftButton);
 
 				rightButton = new FRectButton(FG.width - buttonWidth, 0, buttonWidth, FG.height);
 				rightButton.onOver = newRound;
+				rightButton.pointToCheck = player.collision.p;
 				Add(rightButton);
 			}
 
