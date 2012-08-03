@@ -1,9 +1,9 @@
 package Vortex.Scenes
 {
 
-	import Framework.FScene;
-	import Framework.GUI.FButton;
 	import Framework.GUI.FText;
+	import Framework.GUI.Buttons.FRectButton;
+	import Framework.GUI.Buttons.FCircleButton;
 
 	import Framework.FG;
 	import Framework.FGroup;
@@ -27,11 +27,21 @@ package Vortex.Scenes
 	{
 
 		protected var enemies:FGroup;
-		protected var numEnemies:int;
 		protected var player:Player;
 
 		protected var bd:BitmapData;
 		protected var b:Bitmap;
+
+		protected var centerButton:FCircleButton;
+		protected var leftButton:FRectButton;
+		protected var rightButton:FRectButton;
+		protected var buttonWidth:int;
+
+		// Show center button or edge button?
+		protected var useCenterButton:Boolean;
+
+		// Track current round
+		protected var roundNum:int;
 
 		public function Game():void
 		{
@@ -45,19 +55,12 @@ package Vortex.Scenes
 			enemies = new FGroup();
 			Add(enemies);
 
-			numEnemies = 100;
-
 			player = new Player();
 			Add(player);
 
-			var c:Number;
-			var dist:Number;
-			for(var i:int = 0; i < numEnemies; i++)
-			{
-				c = FColor.RGBtoHEX(randColor(i*0.01), randColor(i*0.01 + 2), randColor(i*0.025 + 4));
-				dist = noise(i*0.01);
-				enemies.Add(new Debris(c,dist));
-			}
+			buttonWidth = 20;
+
+			newRound();
 		}
 
 		override public function Update():void
@@ -76,6 +79,51 @@ package Vortex.Scenes
 					e.isColliding = false;
 				}
 			}
+		}
+
+		private function newRound():void
+		{
+			// New round
+			roundNum++;
+
+			if(useCenterButton)
+			{
+				Remove(rightButton);
+				Remove(leftButton);
+				centerButton = new FCircleButton(0, 0, "");
+				centerButton.radius = 50;
+				centerButton.draws = true;
+				centerButton.onOver = newRound;
+				centerButton.CenterX().CenterY();
+				Add(centerButton);
+			}
+			else
+			{
+				if(roundNum > 1)
+					Remove(centerButton);
+
+				leftButton = new FRectButton(0, 0, buttonWidth, FG.height);
+				leftButton.onOver = newRound;
+				Add(leftButton);
+
+				rightButton = new FRectButton(FG.width - buttonWidth, 0, buttonWidth, FG.height);
+				rightButton.onOver = newRound;
+				Add(rightButton);
+			}
+
+			enemies.Destroy();
+
+			var c:Number;
+			var dist:Number;
+			for(var i:int = 0; i < roundNum * 10; i++)
+			{
+				c = FColor.RGBtoHEX(randColor(i*0.01), randColor(i*0.01 + 2), randColor(i*0.025 + 4));
+				dist = noise(i*0.01);
+				enemies.Add(new Debris(c,dist));
+			}
+			
+			// New button location for next round
+			useCenterButton = !useCenterButton;
 		}
 
 		private function randColor(x:Number):int
