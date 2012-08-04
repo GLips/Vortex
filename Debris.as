@@ -4,12 +4,12 @@ package Vortex
 	import Framework.FSprite;
 	import Framework.FG;
 
+	import Framework.Utils.FColor;
+
 	import Framework.Maths.FMath;
 
 	public class Debris extends FSprite
 	{
-
-		private var color:Number;
 
 		public var radius:int;
 		private var dist:int;
@@ -20,10 +20,14 @@ package Vortex
 
 		public var isColliding:Boolean;
 
-		public function Debris(c:Number, Dist:Number):void
+		private var lineColor:Number, color:Number;
+
+		public function Debris(r:int, g:int, b:int, Dist:Number):void
 		{
 			super();
-			color = c;
+
+			color = FColor.RGBtoHEX(r,g,b);
+			lineColor = FColor.RGBtoHEX(r * 0.35,g * 0.35,b * 0.35);
 		}
 
 		override public function Create():void
@@ -62,7 +66,7 @@ package Vortex
 			{
 				graphics.beginFill(color);
 			}
-			graphics.lineStyle(1);
+			graphics.lineStyle(1, lineColor);
 			graphics.drawCircle(0, 0, radius - 1);
 			graphics.endFill();
 		}

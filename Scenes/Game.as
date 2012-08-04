@@ -14,6 +14,7 @@ package Vortex.Scenes
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FNoise;
 	import Framework.Utils.FColor;
+	import Framework.Utils.FTimer;
 
 	import Framework.Maths.FVec;
 	import Framework.Maths.FPoint;
@@ -71,11 +72,11 @@ package Vortex.Scenes
 
 			for each(var e:Debris in enemies.members)
 			{
-				bd.draw(e);
+				//bd.draw(e);
 				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
 				{
 					e.isColliding = true;
-					FG.SwitchScene(new MainMenu());
+					Add(new FTimer(3, gameOver));
 				}
 				else
 				{
@@ -83,7 +84,12 @@ package Vortex.Scenes
 				}
 			}
 
-			b = new Bitmap(bd);
+			//b = new Bitmap(bd);
+		}
+
+		private function gameOver():void
+		{
+			FG.SwitchScene(new MainMenu());
 		}
 
 		private function newRound():void
@@ -123,13 +129,11 @@ package Vortex.Scenes
 			enemies.Destroy();
 
 			FNoise.seed = Math.random() * 99999999;
-			var c:Number;
 			var dist:Number;
 			for(var i:int = 0; i < roundNum * 200; i++)
 			{
-				c = FColor.RGBtoHEX(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4));
 				dist = noise(i*0.01);
-				enemies.Add(new Debris(c,dist));
+				enemies.Add(new Debris(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4), dist));
 			}
 			
 			// New button location for next round
