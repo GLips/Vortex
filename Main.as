@@ -9,7 +9,7 @@ package Vortex
 
 	import Vortex.Scenes.*;
 
-	[SWF(width='640',height='480',backgroundColor='#ffffff',frameRate='30')]
+	[SWF(width='640',height='480',backgroundColor='#ffffff',frameRate='60')]
 
 	public class Main extends FGame
 	{

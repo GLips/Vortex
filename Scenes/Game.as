@@ -18,6 +18,7 @@ package Vortex.Scenes
 
 	import Framework.Maths.FVec;
 	import Framework.Maths.FPoint;
+	import Framework.Maths.FMath;
 
 	import flash.display.BitmapData;
 	import flash.display.Bitmap;
@@ -41,8 +42,11 @@ package Vortex.Scenes
 		// Show center button or edge button?
 		protected var useCenterButton:Boolean;
 
-		// Track current round
+		// Track/display current round info
 		protected var roundNum:int;
+		protected var timeLeft:Number;
+		protected var droundNum:FText;
+		protected var dtimeLeft:FText;
 
 		public function Game():void
 		{
@@ -63,12 +67,20 @@ package Vortex.Scenes
 			player = new Player();
 			Add(player);
 
+			timeLeft = 60 * 1000;	// 1 minute, measured in MS.
+			dtimeLeft = new FText(0, 10, "60.0");
+			dtimeLeft.CenterX();
+			GUI.Add(dtimeLeft);
+
 			newRound();
 		}
 
 		override public function Update():void
 		{
 			super.Update();
+
+			timeLeft -= FG.dt;
+			dtimeLeft.UpdateText( String(FMath.round(timeLeft/1000, 2)) );
 
 			for each(var e:Debris in enemies.members)
 			{

@@ -36,7 +36,7 @@ package Vortex
 			radius = Math.round(Math.random() * (maxRadius - 3) + 3);
 
 			dist = Math.round(Math.random() * 100 + 100);
-			speed = Math.random() * 0.75 + 0.25;
+			speed = Math.random() * 0.35 + 0.125;
 			angle = Math.random() * 360;
 
 			var a:Number = FMath.DegreesToRadians(angle);
