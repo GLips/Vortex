@@ -68,9 +68,16 @@ package Vortex.Scenes
 			Add(player);
 
 			timeLeft = 60 * 1000;	// 1 minute, measured in MS.
-			dtimeLeft = new FText(0, 10, "60.0");
-			dtimeLeft.CenterX();
+			dtimeLeft = new FText(0, 25, "60.0");
+			dtimeLeft.UpdateFormat();
+			dtimeLeft.CenterText().CenterX();
 			GUI.Add(dtimeLeft);
+
+			droundNum = new FText(0, 10, "Round: "+roundNum);
+			droundNum.size = 24;
+			droundNum.UpdateFormat();
+			droundNum.x = FG.width - droundNum.width - 25;
+			GUI.Add(droundNum);
 
 			newRound();
 		}
@@ -80,7 +87,8 @@ package Vortex.Scenes
 			super.Update();
 
 			timeLeft -= FG.dt;
-			dtimeLeft.UpdateText( String(FMath.round(timeLeft/1000, 2)) );
+
+			updateGUI();
 
 			for each(var e:Debris in enemies.members)
 			{
@@ -99,6 +107,31 @@ package Vortex.Scenes
 			//b = new Bitmap(bd);
 		}
 
+		private function updateGUI():void
+		{
+			dtimeLeft.UpdateText( String(FMath.Round(timeLeft/1000, 2)) );
+			droundNum.UpdateText( "Round: "+roundNum);
+
+			if(timeLeft <= 10 * 1000) // 10 seconds left
+			{
+				dtimeLeft.scaleX = (Math.sin(timeLeft/100) * 0.5) + 1.5;
+				dtimeLeft.scaleY = (Math.sin(timeLeft/100) * 0.5) + 1.5;
+			}
+			// This is a bad abstraction, I need to make an interpolator for this.
+			if(timeLeft < 5 * 1000) // 5 seconds left
+			{
+				var alarmTime:int = (timeLeft % 1250) - 749;
+				var mod:Number = FMath.Clamp(Math.abs(alarmTime)/525);
+
+				BG.graphics.clear();
+				
+				BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
+				
+				BG.graphics.drawRect(0, 0, FG.width, FG.height);
+				BG.graphics.endFill();
+			}
+		}
+
 		private function gameOver():void
 		{
 			FG.SwitchScene(new MainMenu());
@@ -109,6 +142,24 @@ package Vortex.Scenes
 			// New round
 			roundNum++;
 
+			placeButtons();
+
+			//enemies.Destroy();
+
+			FNoise.seed = Math.random() * 99999999;
+			var dist:Number;
+			for(var i:int = 0; i < 5; i++)
+			{
+				dist = noise(i*0.01);
+				enemies.Add(new Debris(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4), dist));
+			}
+			
+			// New button location for next round
+			useCenterButton = !useCenterButton;
+		}
+
+		private function placeButtons():void
+		{
 			if(useCenterButton)
 			{
 				Remove(rightButton);
@@ -137,19 +188,6 @@ package Vortex.Scenes
 				rightButton.pointToCheck = player.collision.p;
 				Add(rightButton);
 			}
-
-			enemies.Destroy();
-
-			FNoise.seed = Math.random() * 99999999;
-			var dist:Number;
-			for(var i:int = 0; i < roundNum * 200; i++)
-			{
-				dist = noise(i*0.01);
-				enemies.Add(new Debris(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4), dist));
-			}
-			
-			// New button location for next round
-			useCenterButton = !useCenterButton;
 		}
 
 		private function randColor(x:Number):int

@@ -27,7 +27,7 @@ package Vortex
 			super();
 
 			color = FColor.RGBtoHEX(r,g,b);
-			lineColor = FColor.RGBtoHEX(r * 0.35,g * 0.35,b * 0.35);
+			lineColor = FColor.RGBtoHEX(r * 0.45,g * 0.45,b * 0.45);
 		}
 
 		override public function Create():void

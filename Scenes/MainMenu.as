@@ -7,6 +7,7 @@ package Vortex.Scenes
 
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FCircleButton;
+	import Framework.GUI.Buttons.FRectButton;
 
 	import Framework.FG;
 
