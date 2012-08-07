@@ -39,6 +39,9 @@ package Vortex.Scenes
 		protected var leftButton:FRectButton;
 		protected var rightButton:FRectButton;
 
+		// Animation stuff
+		protected var exploding:Boolean;
+
 		// Show center button or edge button?
 		protected var useCenterButton:Boolean;
 
@@ -79,6 +82,8 @@ package Vortex.Scenes
 			droundNum.x = FG.width - droundNum.width - 25;
 			GUI.Add(droundNum);
 
+			FNoise.seed = Math.random() * 99999999;
+
 			newRound();
 		}
 
@@ -92,17 +97,22 @@ package Vortex.Scenes
 
 			for each(var e:Debris in enemies.members)
 			{
-				//bd.draw(e);
+				e.explode = exploding;
+
 				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
 				{
 					e.isColliding = true;
-					Add(new FTimer(3, gameOver));
+					exploding = true;
+					Add(new FTimer(2, gameOver));
 				}
 				else
 				{
 					e.isColliding = false;
 				}
 			}
+
+			if(timeLeft <= 0)
+				gameOver();
 
 			//b = new Bitmap(bd);
 		}
@@ -146,12 +156,12 @@ package Vortex.Scenes
 
 			//enemies.Destroy();
 
-			FNoise.seed = Math.random() * 99999999;
 			var dist:Number;
-			for(var i:int = 0; i < 5; i++)
+			var numToAdd:int = enemies.length + 5;
+			for(var i:int = enemies.length; i < numToAdd; i++)
 			{
 				dist = noise(i*0.01);
-				enemies.Add(new Debris(randColor(i*0.025), randColor(i*0.025 + 2), randColor(i*0.025 + 4), dist));
+				enemies.Add(new Debris(randColor(i*0.005), randColor(i*0.005 + 2), randColor(i*0.005 + 4), dist));
 			}
 			
 			// New button location for next round
@@ -192,7 +202,7 @@ package Vortex.Scenes
 
 		private function randColor(x:Number):int
 		{
-			return Math.round(noise(x) * 205) + 50;
+			return Math.round(noise(x) * 230) + 25;
 		}
 
 		private function noise(x:Number):Number

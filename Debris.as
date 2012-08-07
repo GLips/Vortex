@@ -11,10 +11,14 @@ package Vortex
 	public class Debris extends FSprite
 	{
 
+		private var curRadius:int;
 		public var radius:int;
-		private var dist:int;
+		public var dist:int;
 		private var speed:Number;
 		private var angle:Number;
+		private var explodeVelocity:Number;
+
+		public var explode:Boolean;
 
 		public var collision:FCircle;
 
@@ -38,6 +42,7 @@ package Vortex
 			dist = Math.round(Math.random() * 100 + 100);
 			speed = Math.random() * 0.35 + 0.125;
 			angle = Math.random() * 360;
+			explodeVelocity = Math.random() * 10 + 5;
 
 			var a:Number = FMath.DegreesToRadians(angle);
 			x = (Math.cos(a) * dist) + FG.width/2;
@@ -50,6 +55,9 @@ package Vortex
 		{
 			angle = (angle + speed) % 360;
 
+			if(explode)
+				dist += explodeVelocity;
+
 			var a:Number = FMath.DegreesToRadians(angle);
 			collision.p.x = x = (Math.cos(a) * dist) + FG.width/2;
 			collision.p.y = y = (Math.sin(a) * dist) + FG.height/2;
@@ -57,6 +65,9 @@ package Vortex
 
 		override public function Draw():void
 		{
+			if(curRadius < radius)
+				curRadius++;
+
 			graphics.clear();
 			if(isColliding)
 			{
@@ -67,7 +78,7 @@ package Vortex
 				graphics.beginFill(color);
 			}
 			graphics.lineStyle(1, lineColor);
-			graphics.drawCircle(0, 0, radius - 1);
+			graphics.drawCircle(0, 0, curRadius - 1);
 			graphics.endFill();
 		}
 	}
