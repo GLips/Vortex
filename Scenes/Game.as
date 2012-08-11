@@ -70,17 +70,17 @@ package Vortex.Scenes
 			player = new Player();
 			Add(player);
 
-			timeLeft = 60 * 1000;	// 1 minute, measured in MS.
+			timeLeft = 60;		// 1 minute long round
 			dtimeLeft = new FText(0, 25, "60.0");
 			dtimeLeft.UpdateFormat();
 			dtimeLeft.CenterText().CenterX();
-			GUI.Add(dtimeLeft);
+			zone_GUI.Add(dtimeLeft);
 
 			droundNum = new FText(0, 10, "Round: "+roundNum);
 			droundNum.size = 24;
 			droundNum.UpdateFormat();
 			droundNum.x = FG.width - droundNum.width - 25;
-			GUI.Add(droundNum);
+			zone_GUI.Add(droundNum);
 
 			FNoise.seed = Math.random() * 99999999;
 
@@ -119,26 +119,26 @@ package Vortex.Scenes
 
 		private function updateGUI():void
 		{
-			dtimeLeft.UpdateText( String(FMath.Round(timeLeft/1000, 2)) );
+			dtimeLeft.UpdateText( String(FMath.Round(timeLeft, 2)) );
 			droundNum.UpdateText( "Round: "+roundNum);
 
-			if(timeLeft <= 10 * 1000) // 10 seconds left
+			if(timeLeft <= 10)
 			{
 				dtimeLeft.scaleX = (Math.sin(timeLeft/100) * 0.5) + 1.5;
 				dtimeLeft.scaleY = (Math.sin(timeLeft/100) * 0.5) + 1.5;
 			}
 			// This is a bad abstraction, I need to make an interpolator for this.
-			if(timeLeft < 5 * 1000) // 5 seconds left
+			if(timeLeft < 5)
 			{
 				var alarmTime:int = (timeLeft % 1250) - 749;
 				var mod:Number = FMath.Clamp(Math.abs(alarmTime)/525);
 
-				BG.graphics.clear();
+				zone_BG.graphics.clear();
 				
-				BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
+				zone_BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
 				
-				BG.graphics.drawRect(0, 0, FG.width, FG.height);
-				BG.graphics.endFill();
+				zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
+				zone_BG.graphics.endFill();
 			}
 		}
 

@@ -16,7 +16,8 @@ package Vortex
 
 		public function Main():void
 		{
-			super(this, 640, 480, MainMenu);
+			//super(this, 640, 480, MainMenu);
+			super(this, 640, 480, ParticleTest);
 		}
 	}
 

@@ -4,6 +4,7 @@ package Vortex.Scenes
 	import Vortex.Scenes.GeneralScene;
 	import Vortex.Scenes.About;
 	import Vortex.Scenes.Game;
+	import Vortex.Scenes.ParticleTest;
 
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FCircleButton;
