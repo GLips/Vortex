@@ -25,6 +25,7 @@ package Vortex.Scenes
 
 			a = new FEmitter();
 			Add(a);
+			a.SetYSpeed(-25, 0);
 			a.Make();
 			//a.SetSize(FG.width);
 			a.Start();
