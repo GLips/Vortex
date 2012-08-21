@@ -2,10 +2,10 @@ package Vortex.Scenes
 {
 
 	import Framework.FG;
-	import Framework.GUI.Buttons.FCircleButton;
 
+	// Particle things
 	import Framework.FEmitter;
-	import Framework.FParticle;
+	import Vortex.Particles.Confetti;
 
 	import Vortex.Scenes.MainMenu;
 
@@ -25,14 +25,10 @@ package Vortex.Scenes
 
 			a = new FEmitter();
 			Add(a);
-			a.SetYSpeed(-25, 0);
-			a.Make();
-			//a.SetSize(FG.width);
-			a.Start();
-
-			var b:FParticle = new FParticle();
-			b.x = b.y = 100;
-			Add(b);
+			a.SetYSpeed(-20, 10);
+			a.Make(Confetti);
+			a.SetSize(FG.width);
+			a.Start(FEmitter.CONSTANT);
 		}
 
 		override public function Update():void
