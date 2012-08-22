@@ -161,7 +161,7 @@ package Vortex.Scenes
 			for(var i:int = enemies.length; i < numToAdd; i++)
 			{
 				dist = noise(i*0.01);
-				enemies.Add(new Debris(randColor(i*0.005), randColor(i*0.005 + 2), randColor(i*0.005 + 4), dist));
+				enemies.Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), dist));
 			}
 			
 			// New button location for next round

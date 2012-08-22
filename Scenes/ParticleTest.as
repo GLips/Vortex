@@ -6,6 +6,7 @@ package Vortex.Scenes
 	// Particle things
 	import Framework.FEmitter;
 	import Vortex.Particles.Confetti;
+	import Framework.Maths.FVec;
 
 	import Vortex.Scenes.MainMenu;
 
@@ -24,16 +25,22 @@ package Vortex.Scenes
 			super.Create();
 
 			a = new FEmitter();
+			a.y = -10;
 			Add(a);
-			a.SetYSpeed(-20, 10);
+			a.SetYSpeed(-5, 5);
+			a.SetXSpeed(-5, 5);
+			a.SetDrag(2, 0);
+			a.SetTopSpeed(100, 5);
+			a.acceleration = new FVec(0, 40);
 			a.Make(Confetti);
 			a.SetSize(FG.width);
-			a.Start(FEmitter.CONSTANT);
+			a.Start(FEmitter.CONSTANT, 3);
 		}
 
 		override public function Update():void
 		{
 			super.Update();
+
 
 			if(FG.mouse.justPressed())
 			{

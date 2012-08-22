@@ -11,12 +11,14 @@ package Vortex.Particles
 
 		private var c:uint;
 		private var h:int;
+		private var w:int;
 
 		public function Confetti()
 		{
 			super();
 
-			h = Math.round(Math.random() + 2);
+			h = 2;
+			w = Math.round(FMath.Random(4, 6));
 		}
 
 		override public function Create():void
@@ -45,7 +47,7 @@ package Vortex.Particles
 		{
 			graphics.clear();
 			graphics.beginFill(c);
-			graphics.drawRect(-5,-h,10,h*2);
+			graphics.drawRect(-w,-h,w*2,h*2);
 			graphics.endFill();
 			draws = false;
 		}

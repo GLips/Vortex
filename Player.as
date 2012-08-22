@@ -8,6 +8,7 @@ package Vortex
 
 	import Framework.Maths.FVec;
 	import Framework.Maths.FPoint;
+	import Framework.Maths.FMath;
 
 	public class Player extends FSprite
 	{
@@ -24,7 +25,7 @@ package Vortex
 		override public function Create():void
 		{
 			radius = 2;
-			moveSpeed = 20;
+			moveSpeed = 30;
 			collision = new FCircle(x, y, radius);
 		}
 
@@ -38,6 +39,17 @@ package Vortex
 				temp.Normalize();
 				temp.Mult(moveSpeed);
 			}
+
+			// Rotation calculation
+			var adj:Number = FG.mouse.x - x;
+			var opp:Number = FG.mouse.y - y;
+			var rot:Number = FMath.RadiansToDegrees(Math.atan(opp / adj));
+
+			rotation = rot;
+
+			// Velocity squish!
+			scaleX = 1 + Math.abs(temp.x/(moveSpeed/4));
+			scaleY = 1 - Math.abs(temp.x/(moveSpeed*2));
 
 			// Update collision model and the location
 			collision.p.x = x += temp.x;
