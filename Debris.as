@@ -20,6 +20,10 @@ package Vortex
 
 		public var explode:Boolean;
 
+		// Sound!
+		[Embed(source="Sounds/explosion.mp3")]
+		public var S_explosion:Class;
+
 		public var collision:FCircle;
 
 		public var isColliding:Boolean;
@@ -82,6 +86,13 @@ package Vortex
 			graphics.lineStyle(1, lineColor);
 			graphics.drawCircle(0, 0, Math.round(curRadius - 1));
 			graphics.endFill();
+		}
+
+		public function Explode():void
+		{
+			explode = true;
+			isColliding = true;
+			FG.soundEngine.Play(new S_explosion());
 		}
 	}
 }

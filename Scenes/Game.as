@@ -39,6 +39,10 @@ package Vortex.Scenes
 		protected var leftButton:FRectButton;
 		protected var rightButton:FRectButton;
 
+		// Sound!
+		[Embed(source="Sounds/roundOver.mp3")]
+        public var S_roundOver:Class;
+
 		// Animation stuff
 		protected var exploding:Boolean;
 
@@ -101,7 +105,7 @@ package Vortex.Scenes
 
 				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
 				{
-					e.isColliding = true;
+					e.Explode();
 					exploding = true;
 					Add(new FTimer(2, gameOver));
 				}
@@ -144,6 +148,7 @@ package Vortex.Scenes
 
 		private function gameOver():void
 		{
+			FG.soundEngine.Play(new S_roundOver());
 			FG.SwitchScene(new MainMenu());
 		}
 
