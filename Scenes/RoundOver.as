@@ -1,24 +1,32 @@
 package Vortex.Scenes
 {
 
+	// Vortex Imports
 	import Vortex.Scenes.GeneralScene;
 	import Vortex.Scenes.About;
 	import Vortex.Scenes.Game;
-	import Vortex.Scenes.ParticleTest;
 
+	import Vortex.Particles.Confetti;
+
+	// Framework Imports
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FCircleButton;
 	import Framework.GUI.Buttons.FRectButton;
 
 	import Framework.FG;
+	import Framework.FEmitter;
+
+	import Framework.Maths.FVec;
 
 	import Framework.Shapes.FRect;
 	import Framework.Utils.FCollide;
 
-	public class MainMenu extends GeneralScene
+	public class RoundOver extends GeneralScene
 	{
 
-		public function MainMenu():void
+		private var confettiEmitter:FEmitter;
+
+		public function RoundOver():void
 		{
 			super();
 		}
@@ -27,33 +35,27 @@ package Vortex.Scenes
 		{
 			super.Create();
 
-			var vortexText:FText = new FText(0, 20, "Vortex");
-			Add(vortexText);
-			vortexText.size = 72;
-			vortexText.UpdateFormat();
-			vortexText.CenterX();
-
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game");
 			b.onOver = startGame;
 			b.CenterX().CenterY();
 			Add(b);
 
-			/*
-			var a:FCircleButton = new FCircleButton(0, 0, "About", aboutMenu);
-			a.CenterX().CenterY(100);
-			a.y = FG.height/2 - a.height/2 + 100;
-			Add(a);
-			*/
+			confettiEmitter = new FEmitter();
+			confettiEmitter.y = -10;
+			Add(confettiEmitter);
+			confettiEmitter.SetYSpeed(-5, 5);
+			confettiEmitter.SetXSpeed(-5, 5);
+			confettiEmitter.SetDrag(2, 0);
+			confettiEmitter.SetTopSpeed(100, 5);
+			confettiEmitter.acceleration = new FVec(0, 40);
+			confettiEmitter.Make(Confetti, 150);
+			confettiEmitter.SetSize(FG.width);
+			confettiEmitter.Start(FEmitter.CONSTANT, 3, 0, 0.025);
 		}
 
 		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
-		}
-
-		protected function aboutMenu():void
-		{
-			FG.SwitchScene(new About());
 		}
 
 		/*override public function Update():void

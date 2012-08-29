@@ -13,7 +13,6 @@ package Vortex
 	public class Player extends FSprite
 	{
 
-		public var collision:FCircle;
 		private var radius:int;
 		private var moveSpeed:int;
 
@@ -24,6 +23,8 @@ package Vortex
 
 		override public function Create():void
 		{
+			super.Create();
+
 			radius = 2;
 			moveSpeed = 30;
 			collision = new FCircle(x, y, radius);
@@ -52,8 +53,10 @@ package Vortex
 			scaleY = 1 - Math.abs(temp.x/(moveSpeed*2));
 
 			// Update collision model and the location
-			collision.p.x = x += temp.x;
-			collision.p.y = y += temp.y;
+			x += temp.x;
+			y += temp.y;
+
+			super.Update();
 		}
 
 		override public function Draw():void

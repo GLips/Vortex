@@ -3,10 +3,13 @@ package Vortex
 	import Framework.Shapes.FCircle;
 	import Framework.FSprite;
 	import Framework.FG;
+	import Framework.FEmitter;
 
 	import Framework.Utils.FColor;
 
 	import Framework.Maths.FMath;
+
+	import Vortex.Particles.PlanetDebris;
 
 	public class Debris extends FSprite
 	{
@@ -24,7 +27,7 @@ package Vortex
 		[Embed(source="Sounds/explosion.mp3")]
 		public var S_explosion:Class;
 
-		public var collision:FCircle;
+		//public var collision:FCircle;
 
 		public var isColliding:Boolean;
 
@@ -40,6 +43,8 @@ package Vortex
 
 		override public function Create():void
 		{
+			super.Create();
+
 			var maxRadius:int = 5;
 			radius = Math.round(Math.random() * (maxRadius - 3) + 3);
 
@@ -61,12 +66,11 @@ package Vortex
 		{
 			angle = (angle + speed) % 360;
 
-			if(explode)
-				dist += explodeVelocity;
-
 			var a:Number = FMath.DegreesToRadians(angle);
-			collision.p.x = x = (Math.cos(a) * dist) + FG.width/2;
-			collision.p.y = y = (Math.sin(a) * dist) + FG.height/2;
+			x = (Math.cos(a) * dist) + FG.width/2;
+			y = (Math.sin(a) * dist) + FG.height/2;
+
+			super.Update();
 		}
 
 		override public function Draw():void
@@ -90,9 +94,28 @@ package Vortex
 
 		public function Explode():void
 		{
-			explode = true;
-			isColliding = true;
-			FG.soundEngine.Play(new S_explosion());
+			if(!explode)
+			{
+				explode = true;
+				isColliding = true;
+				FG.soundEngine.Play(new S_explosion());
+
+				graphics.clear();
+				draws = false;
+
+				// Particle effect time!
+				var e:FEmitter = new FEmitter();
+				FG._scene.Add(e);
+				e.SetXSpeed(-5, 5);
+				e.SetYSpeed(-5, 5);
+				e.SetTopSpeed(5, 5);
+				e.SetAcceleration(0,0);
+				e.SetDrag(0,0);
+				e.x = x;
+				e.y = y;
+				e.Make(PlanetDebris, radius * 2 + 2);
+				e.Start();
+			}
 		}
 	}
 }

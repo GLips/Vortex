@@ -40,8 +40,10 @@ package Vortex.Scenes
 		protected var rightButton:FRectButton;
 
 		// Sound!
-		[Embed(source="Sounds/roundOver.mp3")]
+		[Embed(source="../Sounds/roundOver.mp3")]
         public var S_roundOver:Class;
+		[Embed(source="../Sounds/spawnIn.mp3")]
+        public var S_spawnIn:Class;
 
 		// Animation stuff
 		protected var exploding:Boolean;
@@ -103,7 +105,7 @@ package Vortex.Scenes
 			{
 				e.explode = exploding;
 
-				if(e != null && FCollide.CircleCircle(player.collision, e.collision))
+				if(e != null && FCollide.CircleCircle(player.collision as FCircle, e.collision as FCircle))
 				{
 					e.Explode();
 					exploding = true;
@@ -149,7 +151,7 @@ package Vortex.Scenes
 		private function gameOver():void
 		{
 			FG.soundEngine.Play(new S_roundOver());
-			FG.SwitchScene(new MainMenu());
+			FG.SwitchScene(new RoundOver());
 		}
 
 		private function newRound():void
@@ -158,6 +160,8 @@ package Vortex.Scenes
 			roundNum++;
 
 			placeButtons();
+
+			FG.soundEngine.Play(new S_spawnIn());
 
 			//enemies.Destroy();
 
@@ -183,7 +187,7 @@ package Vortex.Scenes
 				centerButton.radius = 50;
 				centerButton.draws = true;
 				centerButton.onOver = newRound;
-				centerButton.pointToCheck = player.collision.p;
+				centerButton.pointToCheck = player.collision;
 				centerButton.CenterX().CenterY();
 				Add(centerButton);
 			}
@@ -195,12 +199,12 @@ package Vortex.Scenes
 				var buttonWidth:int = 20;
 				leftButton = new FRectButton(0, 0, buttonWidth, FG.height);
 				leftButton.onOver = newRound;
-				leftButton.pointToCheck = player.collision.p;
+				leftButton.pointToCheck = player.collision;
 				Add(leftButton);
 
 				rightButton = new FRectButton(FG.width - buttonWidth, 0, buttonWidth, FG.height);
 				rightButton.onOver = newRound;
-				rightButton.pointToCheck = player.collision.p;
+				rightButton.pointToCheck = player.collision;
 				Add(rightButton);
 			}
 		}

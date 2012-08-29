@@ -13,6 +13,9 @@ package Vortex.Particles
 		private var h:int;
 		private var w:int;
 
+		// So not all confetti is scaling at the same speed
+		private var randomOffset:Number;
+
 		public function Confetti()
 		{
 			super();
@@ -37,10 +40,12 @@ package Vortex.Particles
 			,	0xF0971A // Orange
 			);
 
+			randomOffset = FMath.Random(-100, 100);
+
 			// Pick a random color!
 			c = FArray.GetRandom(colors);
 
-			spin = FMath.Random(-360, 360);
+			spin = FMath.Random(-15 * velocity.x, 15 * velocity.x);
 		}
 
 		override public function Draw():void
@@ -55,6 +60,8 @@ package Vortex.Particles
 		override public function Update():void
 		{
 			super.Update();
+
+			scaleY = Math.abs(Math.sin((timeLived * 5) + randomOffset)) * 0.75 + 0.25;
 
 			//trace(Math.sin(lifetime));
 			//acceleration = ;
