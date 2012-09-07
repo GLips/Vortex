@@ -1,6 +1,11 @@
 package Vortex.Scenes
 {
+	// Flash
+	import flash.display.BitmapData;
+	import flash.display.Bitmap;
 
+
+	// Framework
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FRectButton;
 	import Framework.GUI.Buttons.FCircleButton;
@@ -20,11 +25,11 @@ package Vortex.Scenes
 	import Framework.Maths.FPoint;
 	import Framework.Maths.FMath;
 
-	import flash.display.BitmapData;
-	import flash.display.Bitmap;
 
+	// Vortex
 	import Vortex.Player;
 	import Vortex.Debris;
+	import Vortex.Global;
 
 	public class Game extends GeneralScene
 	{
@@ -40,8 +45,6 @@ package Vortex.Scenes
 		protected var rightButton:FRectButton;
 
 		// Sound!
-		[Embed(source="../Sounds/roundOver.mp3")]
-        public var S_roundOver:Class;
 		[Embed(source="../Sounds/spawnIn.mp3")]
         public var S_spawnIn:Class;
 
@@ -150,7 +153,7 @@ package Vortex.Scenes
 
 		private function gameOver():void
 		{
-			FG.soundEngine.Play(new S_roundOver());
+			Global.recentScore = roundNum;
 			FG.SwitchScene(new RoundOver());
 		}
 

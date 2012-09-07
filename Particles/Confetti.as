@@ -2,7 +2,10 @@ package Vortex.Particles
 {
 
 	import Framework.FParticle;
+	import Framework.FG;
+
 	import Framework.Utils.FArray;
+	
 	import Framework.Maths.FMath;
 
 	public class Confetti extends FParticle
@@ -29,15 +32,15 @@ package Vortex.Particles
 			super.Create();
 
 			colors = new Array(
-				0xDE3E7E // Pink
-			,	0xDB2C2C // Red
-			,	0x952CDB // Purple
-			,	0x3420E6 // Blue
-			,	0x2076E6 // Light blue
-			,	0x2BBA5F // Light green
-			,	0x2A8C32 // Green
-			,	0xF0EC1A // Yellow
-			,	0xF0971A // Orange
+				0xFF0000 // Pink
+			,	0x00FF00 // Red
+			,	0x0000FF // Purple
+			,	0xFFFF00 // Blue
+			,	0xFF00FF // Light blue
+			,	0x00FFFF // Light green
+			//,	0x2A8C32 // Green
+			//,	0xF0EC1A // Yellow
+			//,	0xF0971A // Orange
 			);
 
 			randomOffset = FMath.Random(-100, 100);
@@ -62,6 +65,7 @@ package Vortex.Particles
 			super.Update();
 
 			scaleY = Math.abs(Math.sin((timeLived * 5) + randomOffset)) * 0.75 + 0.25;
+			scaleX = (3-timeLived)/3;
 
 			//trace(Math.sin(lifetime));
 			//acceleration = ;

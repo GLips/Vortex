@@ -13,7 +13,11 @@ package Vortex.Scenes
 	import Framework.FG;
 
 	import Framework.Shapes.FRect;
+
 	import Framework.Utils.FCollide;
+	import Framework.Utils.FNoise;
+
+	import Vortex.Debris;
 
 	public class MainMenu extends GeneralScene
 	{
@@ -27,16 +31,23 @@ package Vortex.Scenes
 		{
 			super.Create();
 
+			var b:FCircleButton = new FCircleButton(0, 0, "Start Game", startGame);
+			b.CenterX().CenterY();
+			Add(b);
+
+			var dist:Number;
+			var numToAdd:int = 100;
+			for(var i:int = 0; i < numToAdd; i++)
+			{
+				dist = noise(i*0.01);
+				Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), dist));
+			}
+
 			var vortexText:FText = new FText(0, 20, "Vortex");
 			Add(vortexText);
 			vortexText.size = 72;
 			vortexText.UpdateFormat();
 			vortexText.CenterX();
-
-			var b:FCircleButton = new FCircleButton(0, 0, "Start Game");
-			b.onOver = startGame;
-			b.CenterX().CenterY();
-			Add(b);
 
 			/*
 			var a:FCircleButton = new FCircleButton(0, 0, "About", aboutMenu);
@@ -54,6 +65,16 @@ package Vortex.Scenes
 		protected function aboutMenu():void
 		{
 			FG.SwitchScene(new About());
+		}
+
+		private function randColor(x:Number):int
+		{
+			return Math.round(noise(x) * 230) + 25;
+		}
+
+		private function noise(x:Number):Number
+		{
+			return FNoise.noise(x,x,x);
 		}
 
 		/*override public function Update():void
