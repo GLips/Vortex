@@ -20,6 +20,7 @@ package Vortex.Scenes
 	import Framework.Utils.FNoise;
 	import Framework.Utils.FColor;
 	import Framework.Utils.FTimer;
+	import Framework.Utils.FInterpolator;
 
 	import Framework.Maths.FVec;
 	import Framework.Maths.FPoint;
@@ -34,6 +35,7 @@ package Vortex.Scenes
 	public class Game extends GeneralScene
 	{
 
+		protected var numToAdd:int;
 		protected var enemies:FGroup;
 		protected var player:Player;
 
@@ -45,16 +47,25 @@ package Vortex.Scenes
 		protected var rightButton:FRectButton;
 
 		// Sound!
-		[Embed(source="../Sounds/spawnIn.mp3")]
-        public var S_spawnIn:Class;
+		[Embed(source="../Sounds/click.mp3")]
+        public var S_click:Class;
+		[Embed(source="../Sounds/popIn_00.mp3")]
+        public var S_popIn:Class;
 
 		// Animation stuff
 		protected var exploding:Boolean;
 
+		// Tracks when to spawn the next enemy
+		protected var nextSpawn:Number;
+
 		// Show center button or edge button?
 		protected var useCenterButton:Boolean;
 
+		// Interpolators
+		protected var buttonPopInterpolator:FInterpolator;
+
 		// Track/display current round info
+		protected var roundTime:Number;
 		protected var roundNum:int;
 		protected var timeLeft:Number;
 		protected var droundNum:FText;
@@ -79,11 +90,20 @@ package Vortex.Scenes
 			player = new Player();
 			Add(player);
 
+			numToAdd = 0;
+			nextSpawn = 0;
+			roundTime = 0;
+
 			timeLeft = 60;		// 1 minute long round
 			dtimeLeft = new FText(0, 25, "60.0");
 			dtimeLeft.UpdateFormat();
 			dtimeLeft.CenterText().CenterX();
 			zone_GUI.Add(dtimeLeft);
+
+			buttonPopInterpolator = new FInterpolator();
+			buttonPopInterpolator.AddValue(0.5, 1.25);
+			buttonPopInterpolator.AddValue(0.75, 0.75);
+			buttonPopInterpolator.ChangeMethod(FInterpolator.SPLINE);
 
 			droundNum = new FText(0, 10, "Round: "+roundNum);
 			droundNum.size = 24;
@@ -96,13 +116,32 @@ package Vortex.Scenes
 			newRound();
 		}
 
+		override public function Destroy():void
+		{
+			droundNum = null;
+			dtimeLeft = null;
+
+			centerButton = null;
+			leftButton = null;
+			rightButton = null;
+
+			enemies = null;
+
+			buttonPopInterpolator = null;
+		}
+
 		override public function Update():void
 		{
 			super.Update();
 
 			timeLeft -= FG.dt;
+			roundTime += FG.dt;
 
 			updateGUI();
+
+			nextSpawn += FG.dt;
+			if(nextSpawn > 0.05 && numToAdd > 0)
+				spawnDebris();
 
 			for each(var e:Debris in enemies.members)
 			{
@@ -112,6 +151,7 @@ package Vortex.Scenes
 				{
 					e.Explode();
 					exploding = true;
+					removeButtons();
 					Add(new FTimer(2, gameOver));
 				}
 				else
@@ -133,19 +173,39 @@ package Vortex.Scenes
 
 			if(timeLeft <= 10)
 			{
-				dtimeLeft.scaleX = (Math.sin(timeLeft/100) * 0.5) + 1.5;
-				dtimeLeft.scaleY = (Math.sin(timeLeft/100) * 0.5) + 1.5;
+				dtimeLeft.scaleX = dtimeLeft.scaleY = (Math.abs(Math.sin(timeLeft * 3)) * 1.5) + 1;
 			}
-			// This is a bad abstraction, I need to make an interpolator for this.
+
+			if(roundTime < 0.25)
+			{
+				if(!useCenterButton)
+				{
+					centerButton.scaleX = centerButton.scaleY = buttonPopInterpolator.GetValue(roundTime * 4);
+				}
+				else
+				{
+					leftButton.scaleX = rightButton.scaleX = buttonPopInterpolator.GetValue(roundTime * 4);
+				}
+			}
+			else
+			{
+				if(!useCenterButton)
+					centerButton.scaleX = centerButton.scaleY = 1;
+				else
+				{
+					leftButton.scaleX = rightButton.scaleX = 1;
+				}
+			}
+
 			if(timeLeft < 5)
 			{
-				var alarmTime:int = (timeLeft % 1250) - 749;
-				var mod:Number = FMath.Clamp(Math.abs(alarmTime)/525);
+				var i:FInterpolator = new FInterpolator();
+				i.AddValue(0.5, 1);
+				i.AddValue(1, 0);
+				var mod:Number = i.GetValue((timeLeft%2)/2);
 
 				zone_BG.graphics.clear();
-				
 				zone_BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
-				
 				zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
 				zone_BG.graphics.endFill();
 			}
@@ -159,25 +219,45 @@ package Vortex.Scenes
 
 		private function newRound():void
 		{
-			// New round
-			roundNum++;
-
-			placeButtons();
-
-			FG.soundEngine.Play(new S_spawnIn());
-
-			//enemies.Destroy();
-
-			var dist:Number;
-			var numToAdd:int = enemies.length + 5;
-			for(var i:int = enemies.length; i < numToAdd; i++)
+			if(!exploding)
 			{
-				dist = noise(i*0.01);
-				enemies.Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), dist));
+				// New round
+				roundNum++;
+				roundTime = 0;
+
+				placeButtons();
+
+				FG.soundEngine.Play(new S_click());
+
+				//enemies.Destroy();
+
+				numToAdd += (roundNum/10) + 1;
+				
+				// New button location for next round
+				useCenterButton = !useCenterButton;
 			}
-			
-			// New button location for next round
-			useCenterButton = !useCenterButton;
+		}
+
+		private function spawnDebris():void
+		{
+			nextSpawn = 0;
+			FG.soundEngine.Play(new S_popIn());
+			var i:int = enemies.length;
+			enemies.Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), noise(i*0.01)));
+			numToAdd--;
+		}
+
+		private function removeButtons():void
+		{
+			if(useCenterButton)
+			{
+				Remove(rightButton);
+				Remove(leftButton);
+			}
+			else
+			{
+				Remove(centerButton);
+			}
 		}
 
 		private function placeButtons():void

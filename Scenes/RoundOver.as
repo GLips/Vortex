@@ -38,6 +38,13 @@ package Vortex.Scenes
 		private var leftCannon:FEmitter;
 		private var confettiEmitter:FEmitter;
 
+		private var b_newHighScore:Boolean;
+
+		private var t_HighScore:FText;
+		private var t_HighScoreReadout:FText;
+		private var t_RecentScore:FText;
+		private var t_RecentScoreReadout:FText;
+
 		public function RoundOver():void
 		{
 			super();
@@ -47,10 +54,35 @@ package Vortex.Scenes
 		{
 			super.Create();
 
-			if(Global.recentScore > Global.highScore)
+			b_newHighScore = (Global.recentScore > Global.highScore);
+
+			addGUI();
+
+			if(b_newHighScore)
 			{
 				Global.highScore = Global.recentScore;
 
+				celebrate();
+			}
+			else
+			{
+				FG.soundEngine.Play(new S_roundOver());
+			}
+		}
+
+		override public function Update():void
+		{
+			super.Update();
+
+			if(b_newHighScore)
+			{
+				t_HighScoreReadout.scaleX = t_HighScoreReadout.scaleY = Math.abs(Math.sin(t_HighScoreReadout.timeLived * 2)) + 0.5;
+			}
+		}
+
+		// New high score, hooray!
+		private function celebrate():void
+		{
 				FG.soundEngine.Play(new S_cheers());
 
 				confettiEmitter = new FEmitter();
@@ -63,7 +95,7 @@ package Vortex.Scenes
 				confettiEmitter.acceleration = new FVec(0, 40);
 				confettiEmitter.Make(Confetti, 150);
 				confettiEmitter.SetSize(FG.width);
-				confettiEmitter.Start(FEmitter.CONSTANT, 3, 0, 0.05);
+				confettiEmitter.Start(FEmitter.CONSTANT, 3, 0, 0.025);
 
 				rightCannon = new FEmitter();
 				rightCannon.x = FG.width + 10;
@@ -87,43 +119,76 @@ package Vortex.Scenes
 
 				var t:FTimer = new FTimer(0.5, launchCannons);
 				Add(t);
-			}
-			else
-			{
-				FG.soundEngine.Play(new S_roundOver());
-			}
+		}
 
+		private function addGUI():void
+		{
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game", startGame);
 			b.CenterX().CenterY();
 			Add(b);
 
-			var hS:FText = new FText(FG.width / 4, FG.height/4, "High Score:");
-			hS.textAlign = FText.ALIGN_CENTER;
-			hS.size = 18;
-			hS.UpdateFormat();
-			hS.CenterText();
-			Add(hS);
+			t_HighScore = new FText(FG.width / 4, FG.height/4, "High Score:");
+			t_HighScore.textAlign = FText.ALIGN_CENTER;
+			if(b_newHighScore)
+			{
+				t_HighScore.UpdateText("New High Score:");
+				t_HighScore.size = 32
+			}
+			else
+			{
+				t_HighScore.size = 18;
+			}
+			t_HighScore.UpdateFormat();
+			t_HighScore.CenterText();
+			Add(t_HighScore);
 
-			var s:FText = new FText(FG.width/4, FG.height/4 + 25, String(Global.highScore));
-			s.textAlign = FText.ALIGN_CENTER;
-			s.size = 24;
-			s.UpdateFormat();
-			s.CenterText();
-			Add(s);
+			t_HighScoreReadout = new FText(FG.width/4, FG.height/4 + 25, String(Global.highScore));
+			t_HighScoreReadout.textAlign = FText.ALIGN_CENTER;
+			t_HighScoreReadout.size = 24;
+			if(b_newHighScore)
+			{
+				t_HighScoreReadout.UpdateText(String(Global.recentScore));
+				t_HighScoreReadout.y += 20;
+				t_HighScoreReadout.size = 50;
+			}
+			else
+			{
+				t_HighScoreReadout.size = 24;
+			}
+			t_HighScoreReadout.UpdateFormat();
+			t_HighScoreReadout.CenterText();
+			Add(t_HighScoreReadout);
 
-			var rS:FText = new FText(FG.width - (FG.width / 4), FG.height/4, "Last Score:");
-			rS.textAlign = FText.ALIGN_CENTER;
-			rS.size = 18;
-			rS.UpdateFormat();
-			rS.CenterText();
-			Add(rS);
+			t_RecentScore = new FText(FG.width - (FG.width / 4), FG.height/4, "Last Score:");
+			t_RecentScore.textAlign = FText.ALIGN_CENTER;
+			if(b_newHighScore)
+			{
+				t_RecentScore.UpdateText("Old High Score:");
+				t_RecentScore.size = 24;
+			}
+			else
+			{
+				t_RecentScore.size = 18;
+			}
+			t_RecentScore.UpdateFormat();
+			t_RecentScore.CenterText();
+			Add(t_RecentScore);
 
-			s = new FText(FG.width - (FG.width / 4), FG.height/4 + 25, String(Global.recentScore));
-			s.textAlign = FText.ALIGN_CENTER;
-			s.size = 24;
-			s.UpdateFormat();
-			s.CenterText();
-			Add(s);
+			t_RecentScoreReadout = new FText(FG.width - (FG.width / 4), FG.height/4 + 25, String(Global.recentScore));
+			t_RecentScoreReadout.textAlign = FText.ALIGN_CENTER;
+			if(b_newHighScore)
+			{
+				t_RecentScoreReadout.UpdateText(String(Global.highScore));
+				t_RecentScoreReadout.y += 20;
+				t_RecentScoreReadout.size = 32;
+			}
+			else
+			{
+				t_RecentScoreReadout.size = 24;
+			}
+			t_RecentScoreReadout.UpdateFormat();
+			t_RecentScoreReadout.CenterText();
+			Add(t_RecentScoreReadout);
 		}
 
 		private function launchCannons():void
@@ -138,10 +203,5 @@ package Vortex.Scenes
 		{
 			FG.SwitchScene(new Game());
 		}
-
-		/*override public function Update():void
-		{
-			super.Update();
-		}*/
 	}
 }

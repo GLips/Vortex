@@ -27,6 +27,10 @@ package Vortex.Scenes
 		{
 			super.Create();
 
+			graphics.beginFill(0xFFFFFF);
+			graphics.drawRect(0, 0, FG.width, FG.height);
+			graphics.endFill();
+
 			// Set up framerate display
 			framerate = new FText(0, 0, "30.00");
 			avgFramerate = new Array();

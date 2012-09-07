@@ -65,7 +65,7 @@ package Vortex.Particles
 			super.Update();
 
 			scaleY = Math.abs(Math.sin((timeLived * 5) + randomOffset)) * 0.75 + 0.25;
-			scaleX = (3-timeLived)/3;
+			scaleX = (lifetime-timeLived)/lifetime;
 
 			//trace(Math.sin(lifetime));
 			//acceleration = ;

@@ -6,6 +6,7 @@ package Vortex
 	import Framework.FEmitter;
 
 	import Framework.Utils.FColor;
+	import Framework.Utils.FInterpolator;
 
 	import Framework.Maths.FMath;
 
@@ -27,7 +28,7 @@ package Vortex
 		[Embed(source="Sounds/explosion.mp3")]
 		public var S_explosion:Class;
 
-		//public var collision:FCircle;
+		private var growth:FInterpolator;
 
 		public var isColliding:Boolean;
 
@@ -55,11 +56,23 @@ package Vortex
 
 			curRadius = 0.5;
 
+			growth = new FInterpolator();
+			growth.AddValue(0.75, 0.75);
+			growth.AddValue(0.5, 1.5);
+			growth.ChangeMethod(FInterpolator.SPLINE);
+
 			var a:Number = FMath.DegreesToRadians(angle);
 			x = (Math.cos(a) * dist) + FG.width/2;
 			y = (Math.sin(a) * dist) + FG.height/2;
 
 			collision = new FCircle(x, y, radius);
+		}
+
+		override public function Destroy():void
+		{
+			super.Destroy();
+
+			growth = null;
 		}
 
 		override public function Update():void
@@ -75,8 +88,8 @@ package Vortex
 
 		override public function Draw():void
 		{
-			if(curRadius < radius)
-				curRadius += 0.5;
+			if(timeLived < 0.15)
+				curRadius = growth.GetValue(timeLived/0.15) * radius;
 
 			graphics.clear();
 			if(isColliding)
