@@ -12,6 +12,7 @@ package Vortex.Scenes
 
 	import Framework.FG;
 	import Framework.FGroup;
+	import Framework.FScene;
 
 	import Framework.Shapes.FRect;
 	import Framework.Shapes.FCircle;
@@ -25,6 +26,7 @@ package Vortex.Scenes
 	import Framework.Maths.FVec;
 	import Framework.Maths.FPoint;
 	import Framework.Maths.FMath;
+	import Framework.Maths.FEasing;
 
 
 	// Vortex
@@ -49,8 +51,8 @@ package Vortex.Scenes
 		// Sound!
 		[Embed(source="../Sounds/click.mp3")]
         public var S_click:Class;
-		[Embed(source="../Sounds/popIn_00.mp3")]
-        public var S_popIn:Class;
+		[Embed(source="../Sounds/popIn_06.mp3")]
+		public var S_popIn0:Class;
 
 		// Animation stuff
 		protected var exploding:Boolean;
@@ -64,12 +66,24 @@ package Vortex.Scenes
 		// Interpolators
 		protected var buttonPopInterpolator:FInterpolator;
 
+		protected var gameStarted:Boolean;
+		protected var gameDone:Boolean;
+
 		// Track/display current round info
 		protected var roundTime:Number;
 		protected var roundNum:int;
 		protected var timeLeft:Number;
 		protected var droundNum:FText;
 		protected var dtimeLeft:FText;
+
+		// Random colors
+		protected var redAdd:Number;
+		protected var greenAdd:Number;
+		protected var blueAdd:Number;
+
+		protected var offset:Number;
+
+		protected var dinitialCountdown:FText;
 
 		public function Game():void
 		{
@@ -88,14 +102,23 @@ package Vortex.Scenes
 			enemies = new FGroup();
 			Add(enemies);
 			player = new Player();
-			Add(player);
 
 			numToAdd = 0;
 			nextSpawn = 0;
 			roundTime = 0;
 
+			gameDone = false;
+
+			redAdd = Math.random() * 100 + 30;
+			greenAdd = Math.random() * 100 + 30;
+			blueAdd = Math.random() * 100 + 30;
+
+			offset = Math.random() * 9999;
+
 			timeLeft = 60;		// 1 minute long round
-			dtimeLeft = new FText(0, 25, "60.0");
+			dtimeLeft = new FText(0, 40, "60");
+			dtimeLeft.size = 50;
+			dtimeLeft.textAlign = FText.ALIGN_CENTER;
 			dtimeLeft.UpdateFormat();
 			dtimeLeft.CenterText().CenterX();
 			zone_GUI.Add(dtimeLeft);
@@ -111,9 +134,10 @@ package Vortex.Scenes
 			droundNum.x = FG.width - droundNum.width - 25;
 			zone_GUI.Add(droundNum);
 
-			FNoise.seed = Math.random() * 99999999;
-
+			gameStarted = true;
 			newRound();
+			gameStarted = false;
+			roundTime = 1;
 		}
 
 		override public function Destroy():void
@@ -134,13 +158,22 @@ package Vortex.Scenes
 		{
 			super.Update();
 
+			if(!gameStarted)
+			{
+				Add(player);
+				player.x = FG.mouse.x;
+				player.y = FG.mouse.y;
+				//zone_GUI.Remove(dinitialCountdown);
+				//dinitialCountdown = null;
+				gameStarted = true;
+			}
+		
 			timeLeft -= FG.dt;
 			roundTime += FG.dt;
 
 			updateGUI();
 
-			nextSpawn += FG.dt;
-			if(nextSpawn > 0.05 && numToAdd > 0)
+			if(numToAdd > 0)
 				spawnDebris();
 
 			for each(var e:Debris in enemies.members)
@@ -152,7 +185,7 @@ package Vortex.Scenes
 					e.Explode();
 					exploding = true;
 					removeButtons();
-					Add(new FTimer(2, gameOver));
+					Add(new FTimer(1, gameOver));
 				}
 				else
 				{
@@ -162,18 +195,31 @@ package Vortex.Scenes
 
 			if(timeLeft <= 0)
 				gameOver();
-
-			//b = new Bitmap(bd);
 		}
 
 		private function updateGUI():void
 		{
 			dtimeLeft.UpdateText( String(FMath.Round(timeLeft, 2)) );
+			//dtimeLeft.CenterText();
 			droundNum.UpdateText( "Round: "+roundNum);
 
-			if(timeLeft <= 10)
+			if(timeLeft <= 60)
 			{
-				dtimeLeft.scaleX = dtimeLeft.scaleY = (Math.abs(Math.sin(timeLeft * 3)) * 1.5) + 1;
+				var i:FInterpolator = new FInterpolator();
+				i.AddValue(0, 0.75);
+				i.AddValue(0.50, 1);
+				i.AddValue(1, 0.75);
+				var mod:Number = i.GetValue((timeLeft%2)/2);
+
+				dtimeLeft.scaleX = dtimeLeft.scaleY = 1.5 * mod;
+
+				if(timeLeft < 5)
+				{
+					zone_BG.graphics.clear();
+					zone_BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
+					zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
+					zone_BG.graphics.endFill();
+				}
 			}
 
 			if(roundTime < 0.25)
@@ -184,7 +230,8 @@ package Vortex.Scenes
 				}
 				else
 				{
-					leftButton.scaleX = rightButton.scaleX = buttonPopInterpolator.GetValue(roundTime * 4);
+					leftButton.scaleX = buttonPopInterpolator.GetValue(roundTime * 4)
+					rightButton.scaleX = -buttonPopInterpolator.GetValue(roundTime * 4);
 				}
 			}
 			else
@@ -193,33 +240,33 @@ package Vortex.Scenes
 					centerButton.scaleX = centerButton.scaleY = 1;
 				else
 				{
-					leftButton.scaleX = rightButton.scaleX = 1;
+					leftButton.scaleX = 1;
+					rightButton.scaleX = -1;
 				}
-			}
-
-			if(timeLeft < 5)
-			{
-				var i:FInterpolator = new FInterpolator();
-				i.AddValue(0.5, 1);
-				i.AddValue(1, 0);
-				var mod:Number = i.GetValue((timeLeft%2)/2);
-
-				zone_BG.graphics.clear();
-				zone_BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
-				zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
-				zone_BG.graphics.endFill();
 			}
 		}
 
 		private function gameOver():void
 		{
-			Global.recentScore = roundNum;
-			FG.SwitchScene(new RoundOver());
+			if(!gameDone)
+			{
+				Global.recentScore = roundNum;
+				FG.SwitchScene(new RoundOver(), transition, 1);
+				gameDone = true;
+			}
+		}
+
+		private function transition(oldScene:FScene, newScene:FScene, loc:Number):void
+		{
+			newScene.paused = false;
+			loc = 1 - loc;
+			oldScene.alpha = FEasing.QuadIn(loc, 1, 0);
+			newScene.alpha = FEasing.QuadOut(loc, 0, 1);
 		}
 
 		private function newRound():void
 		{
-			if(!exploding)
+			if(!exploding && gameStarted)
 			{
 				// New round
 				roundNum++;
@@ -228,8 +275,6 @@ package Vortex.Scenes
 				placeButtons();
 
 				FG.soundEngine.Play(new S_click());
-
-				//enemies.Destroy();
 
 				numToAdd += (roundNum/10) + 1;
 				
@@ -240,11 +285,30 @@ package Vortex.Scenes
 
 		private function spawnDebris():void
 		{
-			nextSpawn = 0;
-			FG.soundEngine.Play(new S_popIn());
-			var i:int = enemies.length;
-			enemies.Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), noise(i*0.01)));
-			numToAdd--;
+			// mod
+			var i:Number;
+			
+			// colors
+			var r:Number;
+			var g:Number;
+			var b:Number;
+
+			var dist:Number;
+
+
+			FG.soundEngine.Play(new S_popIn0());
+			for(var x:int = 0; x < numToAdd; x++)
+			{
+				i = (enemies.length * 0.005) + offset;
+				dist = noise(i*4);
+
+				r = randColor(i + 100)// * (255 - redAdd) + redAdd;
+				g = randColor(i + 200)// * (255 - greenAdd) + greenAdd;
+				b = randColor(i + 300)// * (255 - blueAdd) + blueAdd;
+				
+				enemies.Add(new Debris(r, g, b, dist));
+			}
+			numToAdd = 0;
 		}
 
 		private function removeButtons():void
@@ -281,11 +345,18 @@ package Vortex.Scenes
 
 				var buttonWidth:int = 20;
 				leftButton = new FRectButton(0, 0, buttonWidth, FG.height);
+				// Make the collision box larger in case player goes off screen
+				leftButton.collision = new FRect(-buttonWidth * 2, 0, buttonWidth * 3, FG.height);
+				leftButton.Draw();
 				leftButton.onOver = newRound;
 				leftButton.pointToCheck = player.collision;
 				Add(leftButton);
 
-				rightButton = new FRectButton(FG.width - buttonWidth, 0, buttonWidth, FG.height);
+				rightButton = new FRectButton(FG.width, 0, buttonWidth, FG.height);
+				rightButton.scaleX = -1;
+				// Make the collision box larger in case player goes off screen
+				rightButton.collision = new FRect(rightButton.x - buttonWidth, rightButton.y, buttonWidth * 3, FG.height)
+				rightButton.Draw();
 				rightButton.onOver = newRound;
 				rightButton.pointToCheck = player.collision;
 				Add(rightButton);
@@ -297,9 +368,10 @@ package Vortex.Scenes
 			return Math.round(noise(x) * 230) + 25;
 		}
 
+		// Returns a number between 0 and 1
 		private function noise(x:Number):Number
 		{
-			return FNoise.noise(x,x,x);
+			return Math.abs(FNoise.noise(x));
 		}
 	}
 }

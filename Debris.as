@@ -9,6 +9,7 @@ package Vortex
 	import Framework.Utils.FInterpolator;
 
 	import Framework.Maths.FMath;
+	import Framework.Maths.FEasing;
 
 	import Vortex.Particles.PlanetDebris;
 
@@ -36,6 +37,8 @@ package Vortex
 
 		public function Debris(r:int, g:int, b:int, Dist:Number):void
 		{
+			dist = (Dist * 150) + 100;
+			
 			super();
 
 			color = FColor.RGBtoHEX(r,g,b);
@@ -49,12 +52,12 @@ package Vortex
 			var maxRadius:int = 5;
 			radius = Math.round(Math.random() * (maxRadius - 3) + 3);
 
-			dist = Math.round(Math.random() * 150 + 100);
+			//dist = Math.round(Math.random() * 150 + 100);
 			speed = Math.random() * 0.35 + 0.125;
 			angle = Math.random() * 360;
 			explodeVelocity = Math.random() * 10 + 5;
 
-			curRadius = 0.5;
+			curRadius = 0.0;
 
 			growth = new FInterpolator();
 			growth.AddValue(0.75, 0.75);
@@ -88,8 +91,11 @@ package Vortex
 
 		override public function Draw():void
 		{
-			if(timeLived < 0.15)
-				curRadius = growth.GetValue(timeLived/0.15) * radius;
+			if(timeLived < 0.25)
+				curRadius = FEasing.ElasticOut(timeLived/0.25, 0, radius);
+			else
+				curRadius = radius;
+				//curRadius = growth.GetValue(timeLived/0.15) * radius;
 
 			graphics.clear();
 			if(isColliding)

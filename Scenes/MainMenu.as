@@ -1,23 +1,28 @@
 package Vortex.Scenes
 {
 
-	import Vortex.Scenes.GeneralScene;
-	import Vortex.Scenes.About;
-	import Vortex.Scenes.Game;
-	import Vortex.Scenes.ParticleTest;
-
+	// Framework imports
 	import Framework.GUI.FText;
 	import Framework.GUI.Buttons.FCircleButton;
 	import Framework.GUI.Buttons.FRectButton;
 
 	import Framework.FG;
+	import Framework.FScene;
 
 	import Framework.Shapes.FRect;
 
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FNoise;
 
+	import Framework.Maths.FEasing;
+
+	// Vortex imports
 	import Vortex.Debris;
+
+	import Vortex.Scenes.GeneralScene;
+	import Vortex.Scenes.About;
+	import Vortex.Scenes.Game;
+	import Vortex.Scenes.ParticleTest;
 
 	public class MainMenu extends GeneralScene
 	{
@@ -25,6 +30,8 @@ package Vortex.Scenes
 
 		[Embed(source="../Sounds/popIn_05.mp3")]
         public var s_popIn:Class;
+
+        private var offset:Number;
 
 		public function MainMenu():void
 		{
@@ -35,6 +42,10 @@ package Vortex.Scenes
 		{
 			super.Create();
 
+			//FG.soundEngine.muted = true;
+
+			offset = Math.random() * 9999;
+
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game", startGame);
 			b.CenterX().CenterY();
 			Add(b);
@@ -43,7 +54,7 @@ package Vortex.Scenes
 			spawnIn();
 
 			var vortexText:FText = new FText(0, 20, "Vortex");
-			Add(vortexText);
+			zone_GUI.Add(vortexText);
 			vortexText.size = 72;
 			vortexText.UpdateFormat();
 			vortexText.CenterX();
@@ -68,10 +79,12 @@ package Vortex.Scenes
 		private function spawnIn():void
 		{
 			var dist:Number;
+			var seed:Number;
 			for(var i:int = 0; i < getNumToAdd(); i++)
 			{
-				dist = noise(i*0.01);
-				Add(new Debris(randColor(i*0.0075), randColor(i*0.0075 + 2), randColor(i*0.0075 + 4), dist));
+				seed = (zone_Game.length * 0.01) + offset;
+				dist = noise(seed);
+				Add(new Debris(randColor(seed + 100), randColor(seed + 200), randColor(seed + 300), dist));
 				numToAdd--;
 			}
 			FG.soundEngine.Play(new s_popIn());
@@ -100,7 +113,7 @@ package Vortex.Scenes
 
 		private function noise(x:Number):Number
 		{
-			return FNoise.noise(x,x,x);
+			return Math.abs(FNoise.noise(x));
 		}
 	}
 }

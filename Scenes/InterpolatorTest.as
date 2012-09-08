@@ -23,15 +23,15 @@ package Vortex.Scenes
 			interpolator.AddValue(0.25, 1);
 			interpolator.AddValue(1, 0.65);
 			interpolator.AddValue(0.5, 0.75);
-			interpolator.ChangeMethod(FInterpolator.SPLINE);
+			interpolator.ChangeMethod(FInterpolator.SINE);
 
 			graphics.beginFill(0xFF0000);
 
 			var fineness:int = 64;
 			for(var x:int = 0; x < fineness; x++)
 			{
-				//graphics.drawEllipse((FG.width/fineness) * x, interpolator.GetValue(x/fineness) * FG.height, 3, 3);
-				graphics.drawEllipse((FG.width/fineness) * x, FEasing.BackInOut(x/fineness, 0, FG.height), 3, 3);
+				graphics.drawEllipse((FG.width/fineness) * x, interpolator.GetValue(x/fineness) * FG.height, 3, 3);
+				//graphics.drawEllipse((FG.width/fineness) * x, FEasing.BounceInOut(x/fineness, 0, FG.height), 3, 3);
 			}
 			graphics.endFill();
 		}

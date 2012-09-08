@@ -5,7 +5,8 @@ package Vortex
 
 	import flash.utils.getTimer;
 
-	import Framework.*;
+	import Framework.FGame;
+	import Framework.Utils.FInternet;
 
 	import Vortex.Scenes.*;
 
@@ -16,8 +17,14 @@ package Vortex
 
 		public function Main():void
 		{
-			//super(this, 640, 480, MainMenu);
-			super(this, 640, 480, InterpolatorTest);
+			var c:Class;
+
+			if(FInternet.ValidURL(this, "dropbox.com", true))
+				c = MainMenu;
+			else
+				c = InterpolatorTest;
+
+			super(this, 640, 480, c);
 		}
 	}
 

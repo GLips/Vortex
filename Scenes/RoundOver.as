@@ -22,6 +22,7 @@ package Vortex.Scenes
 
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FTimer;
+	import Framework.Utils.FInterpolator;
 
 	import Vortex.Global;
 
@@ -42,6 +43,7 @@ package Vortex.Scenes
 
 		private var t_HighScore:FText;
 		private var t_HighScoreReadout:FText;
+		private var hScoreInterpolator:FInterpolator;
 		private var t_RecentScore:FText;
 		private var t_RecentScoreReadout:FText;
 
@@ -55,6 +57,10 @@ package Vortex.Scenes
 			super.Create();
 
 			b_newHighScore = (Global.recentScore > Global.highScore);
+
+			hScoreInterpolator = new FInterpolator(1, 1);
+			hScoreInterpolator.AddValue(0.5, 2);
+			hScoreInterpolator.ChangeMethod(FInterpolator.SINE);
 
 			addGUI();
 
@@ -76,7 +82,7 @@ package Vortex.Scenes
 
 			if(b_newHighScore)
 			{
-				t_HighScoreReadout.scaleX = t_HighScoreReadout.scaleY = Math.abs(Math.sin(t_HighScoreReadout.timeLived * 2)) + 0.5;
+				t_HighScoreReadout.scaleX = t_HighScoreReadout.scaleY = hScoreInterpolator.GetValue((t_HighScoreReadout.timeLived % 2) * 0.5);
 			}
 		}
 
