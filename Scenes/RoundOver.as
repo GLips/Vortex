@@ -64,6 +64,8 @@ package Vortex.Scenes
 
 			addGUI();
 
+			Global.hasPlayed = true;
+
 			if(b_newHighScore)
 			{
 				Global.highScore = Global.recentScore;
@@ -74,6 +76,8 @@ package Vortex.Scenes
 			{
 				FG.soundEngine.Play(new S_roundOver());
 			}
+
+			Global.Save();
 		}
 
 		override public function Update():void

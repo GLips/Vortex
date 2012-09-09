@@ -203,7 +203,7 @@ package Vortex.Scenes
 			//dtimeLeft.CenterText();
 			droundNum.UpdateText( "Round: "+roundNum);
 
-			if(timeLeft <= 60)
+			if(timeLeft <= 10)
 			{
 				var i:FInterpolator = new FInterpolator();
 				i.AddValue(0, 0.75);

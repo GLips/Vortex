@@ -13,11 +13,13 @@ package Vortex.Scenes
 
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FNoise;
+	import Framework.Utils.FInternet;
 
 	import Framework.Maths.FEasing;
 
 	// Vortex imports
 	import Vortex.Debris;
+	import Vortex.Global;
 
 	import Vortex.Scenes.GeneralScene;
 	import Vortex.Scenes.About;
@@ -28,7 +30,7 @@ package Vortex.Scenes
 	{
 		private var numToAdd:int;
 
-		[Embed(source="../Sounds/popIn_05.mp3")]
+		[Embed(source="../Sounds/popIn_06.mp3")]
         public var s_popIn:Class;
 
         private var offset:Number;
@@ -46,12 +48,11 @@ package Vortex.Scenes
 
 			offset = Math.random() * 9999;
 
+			Global.Load();
+
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game", startGame);
 			b.CenterX().CenterY();
 			Add(b);
-
-			numToAdd = 100;
-			spawnIn();
 
 			var vortexText:FText = new FText(0, 20, "Vortex");
 			zone_GUI.Add(vortexText);
@@ -59,12 +60,16 @@ package Vortex.Scenes
 			vortexText.UpdateFormat();
 			vortexText.CenterX();
 
-			/*
-			var a:FCircleButton = new FCircleButton(0, 0, "About", aboutMenu);
+			var a:FRectButton = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
 			a.CenterX().CenterY(100);
-			a.y = FG.height/2 - a.height/2 + 100;
-			Add(a);
-			*/
+			zone_GUI.Add(a);
+
+			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
+			a.CenterX().CenterY(150);
+			zone_GUI.Add(a);
+
+			numToAdd = 100;
+			spawnIn();
 		}
 
 		override public function Update():void
@@ -99,6 +104,11 @@ package Vortex.Scenes
 		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
+		}
+
+		protected function goToIronswine():void
+		{
+			FInternet.GoToURL("http://www.ironswine.com");
 		}
 
 		protected function aboutMenu():void
