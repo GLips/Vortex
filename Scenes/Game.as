@@ -114,7 +114,7 @@ package Vortex.Scenes
 			if(!Global.hasPlayed)
 			{
 				enemyTracker = new FText(0,0, "Avoid debris =>");
-				instructions = new FText(0,0, "You have 60 seconds to complete get the high score.\n\nMouse over the blue bars on the sides to start.");
+				instructions = new FText(0,0, "You have 60 seconds to get the high score.\n\nMouse over the blue bars on the sides to start.");
 				instructions.textAlign = FText.ALIGN_CENTER;
 				instructions.size = 20;
 				instructions.UpdateFormat();

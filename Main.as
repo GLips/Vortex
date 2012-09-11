@@ -5,26 +5,27 @@ package Vortex
 
 	import flash.utils.getTimer;
 
+	import Framework.FG;
 	import Framework.FGame;
 	import Framework.Utils.FInternet;
 
 	import Vortex.Scenes.*;
+	import Vortex.Preloader;
 
 	[SWF(width='640',height='480',backgroundColor='#333333',frameRate='60')]
+	[Frame(factoryClass="Vortex.Preloader")]
 
 	public class Main extends FGame
 	{
 
 		public function Main():void
 		{
-			var c:Class;
+			FG.gameURL = "www.ironswine.com/play/270/Vortex";
+			FG.gameName = "Vortex";
 
-			if(FInternet.ValidURL(this, "dropbox.com", true))
-				c = MainMenu;
-			else
-				c = InterpolatorTest;
+			allowedURLs = new Array("ironswine.com", "fgl.com", "flashgamelicense.com");
 
-			super(this, 640, 480, c);
+			super(this, 640, 480, MainMenu);
 		}
 	}
 

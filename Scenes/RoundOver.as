@@ -23,6 +23,7 @@ package Vortex.Scenes
 	import Framework.Utils.FCollide;
 	import Framework.Utils.FTimer;
 	import Framework.Utils.FInterpolator;
+	import Framework.Utils.FInternet;
 
 	import Vortex.Global;
 
@@ -76,6 +77,14 @@ package Vortex.Scenes
 			{
 				FG.soundEngine.Play(new S_roundOver());
 			}
+
+			var a:FRectButton = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
+			a.CenterX().CenterY(100);
+			zone_GUI.Add(a);
+
+			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
+			a.CenterX().CenterY(150);
+			zone_GUI.Add(a);
 
 			Global.Save();
 		}
@@ -212,6 +221,11 @@ package Vortex.Scenes
 		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
+		}
+
+		protected function goToIronswine():void
+		{
+			FInternet.GoToURL("http://www.google.com");
 		}
 	}
 }

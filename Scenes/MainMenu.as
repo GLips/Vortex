@@ -108,7 +108,7 @@ package Vortex.Scenes
 
 		protected function goToIronswine():void
 		{
-			FInternet.GoToURL("http://www.ironswine.com");
+			FInternet.GoToURL("http://www.google.com");
 		}
 
 		protected function aboutMenu():void
