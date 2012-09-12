@@ -9,6 +9,9 @@ package Vortex.Scenes
 	import Framework.GUI.FText;
 
 	import Framework.Utils.FArray;
+	import Framework.Utils.FInternet;
+	
+	import Framework.Maths.FEasing;
 
 	public class GeneralScene extends FScene
 	{
@@ -32,22 +35,37 @@ package Vortex.Scenes
 			graphics.endFill();
 
 			// Set up framerate display
-			framerate = new FText(0, 0, "30.00");
+			/*
+			framerate = new FText(0, 0, "60.00");
 			avgFramerate = new Array();
 			frames = 5;
 			framerate.x = FG.width - framerate.width;
 			framerate.y = FG.height - framerate.height;
 			zone_GUI.Add(framerate);
+			*/
 		}
 
 		override public function Update():void
 		{
 			super.Update();
 
-			avgFramerate[_curFrame++%frames] = FG.framerate;
+			//avgFramerate[_curFrame++%frames] = FG.framerate;
 
 			// Update framerate display
-			framerate.UpdateText(FArray.Average(avgFramerate).toFixed(2));
+			//framerate.UpdateText(FArray.Average(avgFramerate).toFixed(2));
 		}
-	} 
+
+		protected function goToIronswine():void
+		{
+			FInternet.GoToURL("http://www.google.com");
+		}
+
+		protected function transition(oldScene:FScene, newScene:FScene, loc:Number):void
+		{
+			newScene.paused = false;
+			loc = 1 - loc;
+			oldScene.alpha = FEasing.QuadIn(loc, 1, 0);
+			newScene.alpha = FEasing.QuadOut(loc, 0, 1);
+		}
+	}
 }

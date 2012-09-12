@@ -23,7 +23,7 @@ package Vortex
 			FG.gameURL = "www.ironswine.com/play/270/Vortex";
 			FG.gameName = "Vortex";
 
-			allowedURLs = new Array("ironswine.com", "fgl.com", "flashgamelicense.com");
+			allowedURLs = new Array("ironswine.com", "fgl.com", "flashgamelicense.com", "encodable.com");
 
 			super(this, 640, 480, MainMenu);
 		}

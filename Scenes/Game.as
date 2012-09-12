@@ -76,6 +76,10 @@ package Vortex.Scenes
 		protected var droundNum:FText;
 		protected var dtimeLeft:FText;
 
+		// 
+		protected var dtimeAdded:FText;
+		protected var justAdded:Number;
+
 		// Random colors
 		protected var redAdd:Number;
 		protected var greenAdd:Number;
@@ -87,7 +91,8 @@ package Vortex.Scenes
 
 		// First time instructions
 		protected var enemyTracker:FText;
-		protected var instructions:FText;
+		protected var instructionsLeft:FText;
+		protected var instructionsRight:FText;
 
 		public function Game():void
 		{
@@ -114,14 +119,27 @@ package Vortex.Scenes
 			if(!Global.hasPlayed)
 			{
 				enemyTracker = new FText(0,0, "Avoid debris =>");
-				instructions = new FText(0,0, "You have 60 seconds to get the high score.\n\nMouse over the blue bars on the sides to start.");
-				instructions.textAlign = FText.ALIGN_CENTER;
-				instructions.size = 20;
-				instructions.UpdateFormat();
-				instructions.CenterY().CenterX();
+				instructionsLeft = new FText(20,0, "<= Mouse over this bar");
+				instructionsRight = new FText(FG.width - 140,0, "or this bar =>\nto start!");
+				instructionsLeft.size = 20;
+				instructionsRight.size = 20;
+				instructionsLeft.UpdateFormat();
+				instructionsRight.UpdateFormat();
+				instructionsLeft.CenterY();
+				instructionsRight.CenterY();
 				Add(enemyTracker);
-				Add(instructions);
+				Add(instructionsLeft);
+				Add(instructionsRight);
 			}
+
+			dtimeAdded = new FText();
+			dtimeAdded.alpha = 0;
+			dtimeAdded.textColor = 0x33CC33;
+			dtimeAdded.size = 25;
+			dtimeAdded.UpdateFormat();
+			dtimeAdded.CenterX(50);
+			dtimeAdded.y = 25;
+			Add(dtimeAdded);
 
 			gameDone = false;
 
@@ -131,8 +149,8 @@ package Vortex.Scenes
 
 			offset = Math.random() * 9999;
 
-			timeLeft = 60;		// 1 minute long round
-			dtimeLeft = new FText(0, 40, "60");
+			timeLeft = 5;		// 5 second long round
+			dtimeLeft = new FText(0, 40, "5");
 			dtimeLeft.size = 50;
 			dtimeLeft.textAlign = FText.ALIGN_CENTER;
 			dtimeLeft.UpdateFormat();
@@ -144,7 +162,7 @@ package Vortex.Scenes
 			buttonPopInterpolator.AddValue(0.75, 0.75);
 			buttonPopInterpolator.ChangeMethod(FInterpolator.SPLINE);
 
-			droundNum = new FText(0, 10, "Round: "+roundNum);
+			droundNum = new FText(0, 10, "Score: "+roundNum);
 			droundNum.size = 24;
 			droundNum.UpdateFormat();
 			droundNum.x = FG.width - droundNum.width - 25;
@@ -183,9 +201,9 @@ package Vortex.Scenes
 				//dinitialCountdown = null;
 				gameStarted = true;
 			}
-		
-			timeLeft -= FG.dt;
+			
 			roundTime += FG.dt;
+			justAdded += FG.dt;
 
 			updateGUI();
 
@@ -195,6 +213,10 @@ package Vortex.Scenes
 			if(enemyTracker != null)
 			{
 				updateInstructions();
+			}
+			else
+			{
+				timeLeft -= FG.dt;
 			}
 
 			for each(var e:Debris in enemies.members)
@@ -222,25 +244,44 @@ package Vortex.Scenes
 		{
 			dtimeLeft.UpdateText( String(FMath.Round(timeLeft, 2)) );
 			//dtimeLeft.CenterText();
-			droundNum.UpdateText( "Round: "+roundNum);
+			droundNum.UpdateText( "Score: "+roundNum);
 
-			if(timeLeft <= 10)
+			if(justAdded <= 1)
+			{
+				dtimeAdded.alpha = 1 - justAdded;
+
+			}
+			else
+			{
+				dtimeAdded.alpha = 0;
+			}
+
+			if(timeLeft <= 3)
 			{
 				var i:FInterpolator = new FInterpolator();
-				i.AddValue(0, 0.75);
+				i.AddValue(0, 0.5);
 				i.AddValue(0.50, 1);
-				i.AddValue(1, 0.75);
-				var mod:Number = i.GetValue((timeLeft%2)/2);
+				i.AddValue(1, 0.5);
+				var mod:Number = i.GetValue((timeLeft%1));
 
-				dtimeLeft.scaleX = dtimeLeft.scaleY = 1.5 * mod;
+				dtimeLeft.scaleX = dtimeLeft.scaleY = 2 * mod;
 
-				if(timeLeft < 5)
+				if(timeLeft < 1.5)
 				{
 					zone_BG.graphics.clear();
 					zone_BG.graphics.beginFill(FColor.RGBtoHEX(255, 255 * mod, 255 * mod));
 					zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
 					zone_BG.graphics.endFill();
 				}
+			}
+			else
+			{
+				dtimeLeft.scaleX = dtimeLeft.scaleY = 1;
+
+				zone_BG.graphics.clear();
+				zone_BG.graphics.beginFill(0xFFFFFF);
+				zone_BG.graphics.drawRect(0, 0, FG.width, FG.height);
+				zone_BG.graphics.endFill();
 			}
 
 			if(roundTime < 0.25)
@@ -275,13 +316,16 @@ package Vortex.Scenes
 			if(enemies.length > 1)
 			{
 				Remove(enemyTracker);
-				Remove(instructions);
+				Remove(instructionsLeft);
+				Remove(instructionsRight);
 
 				enemyTracker.Destroy();
-				instructions.Destroy();
+				instructionsLeft.Destroy();
+				instructionsRight.Destroy();
 
 				enemyTracker = null;
-				instructions = null;
+				instructionsLeft = null;
+				instructionsRight = null;
 			}
 		}
 
@@ -295,21 +339,18 @@ package Vortex.Scenes
 			}
 		}
 
-		private function transition(oldScene:FScene, newScene:FScene, loc:Number):void
-		{
-			newScene.paused = false;
-			loc = 1 - loc;
-			oldScene.alpha = FEasing.QuadIn(loc, 1, 0);
-			newScene.alpha = FEasing.QuadOut(loc, 0, 1);
-		}
-
 		private function newRound():void
 		{
 			if(!exploding && gameStarted)
 			{
 				// New round
+				dtimeAdded.UpdateText("+"+FMath.Round(5 - timeLeft, 2)+"s");
+
+
 				roundNum++;
 				roundTime = 0;
+				timeLeft = 5;
+				justAdded = 0;
 
 				placeButtons();
 

@@ -106,11 +106,6 @@ package Vortex.Scenes
 			FG.SwitchScene(new Game());
 		}
 
-		protected function goToIronswine():void
-		{
-			FInternet.GoToURL("http://www.google.com");
-		}
-
 		protected function aboutMenu():void
 		{
 			FG.SwitchScene(new About());

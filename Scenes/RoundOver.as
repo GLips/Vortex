@@ -3,6 +3,7 @@ package Vortex.Scenes
 
 	// Vortex Imports
 	import Vortex.Scenes.GeneralScene;
+	import Vortex.Scenes.MainMenu;
 	import Vortex.Scenes.About;
 	import Vortex.Scenes.Game;
 
@@ -78,14 +79,6 @@ package Vortex.Scenes
 				FG.soundEngine.Play(new S_roundOver());
 			}
 
-			var a:FRectButton = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
-			a.CenterX().CenterY(100);
-			zone_GUI.Add(a);
-
-			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
-			a.CenterX().CenterY(150);
-			zone_GUI.Add(a);
-
 			Global.Save();
 		}
 
@@ -145,6 +138,18 @@ package Vortex.Scenes
 			var b:FCircleButton = new FCircleButton(0, 0, "Start Game", startGame);
 			b.CenterX().CenterY();
 			Add(b);
+
+			var a:FRectButton = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
+			a.CenterX().CenterY(100);
+			Add(a);
+
+			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
+			a.CenterX().CenterY(150);
+			Add(a);
+
+			a = new FRectButton(0, 0, 150, 40, "Main Menu", mainMenu);
+			a.CenterX().CenterY(200);
+			Add(a);
 
 			t_HighScore = new FText(FG.width / 4, FG.height/4, "High Score:");
 			t_HighScore.textAlign = FText.ALIGN_CENTER;
@@ -218,14 +223,14 @@ package Vortex.Scenes
 			leftCannon.Start(FEmitter.EXPLODE, 3);
 		}
 
+		private function mainMenu():void
+		{
+			FG.SwitchScene(new MainMenu(), transition, 1);
+		}
+
 		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
-		}
-
-		protected function goToIronswine():void
-		{
-			FInternet.GoToURL("http://www.google.com");
 		}
 	}
 }
