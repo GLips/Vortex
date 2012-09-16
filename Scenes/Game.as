@@ -210,7 +210,7 @@ package Vortex.Scenes
 			if(numToAdd > 0)
 				spawnDebris();
 
-			if(enemyTracker != null)
+			if(instructionsRight != null)
 			{
 				updateInstructions();
 			}
@@ -310,21 +310,34 @@ package Vortex.Scenes
 
 		private function updateInstructions():void
 		{
-			enemyTracker.x = enemies.members[0].x - enemyTracker.width - 10;
-			enemyTracker.y = enemies.members[0].y - enemyTracker.height/2;
-
-			if(enemies.length > 1)
+			if(enemyTracker != null)
 			{
-				Remove(enemyTracker);
+				enemyTracker.x = enemies.members[0].x - enemyTracker.width - 10;
+				enemyTracker.y = enemies.members[0].y - enemyTracker.height/2;
+			}
+
+			if(enemies.length == 2 && instructionsLeft != null)
+			{
+				instructionsRight.UpdateText("Now mouse back over this");
+				instructionsRight.CenterX().CenterY(-100);
+
 				Remove(instructionsLeft);
-				Remove(instructionsRight);
-
-				enemyTracker.Destroy();
 				instructionsLeft.Destroy();
-				instructionsRight.Destroy();
-
-				enemyTracker = null;
 				instructionsLeft = null;
+			}
+			else if(enemies.length == 3 && enemyTracker != null)
+			{
+				instructionsRight.UpdateText("Now get the high score!");
+				instructionsRight.CenterX().CenterY(-100);
+
+				Remove(enemyTracker);
+				enemyTracker.Destroy();
+				enemyTracker = null;
+			}
+			else if(enemies.length > 3)
+			{
+				Remove(instructionsRight);
+				instructionsRight.Destroy();
 				instructionsRight = null;
 			}
 		}

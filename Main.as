@@ -17,6 +17,7 @@ package Vortex
 
 	public class Main extends FGame
 	{
+		public static var _mochiads_game_id:String = "90218f200617680c";
 
 		public function Main():void
 		{

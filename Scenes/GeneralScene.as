@@ -57,7 +57,7 @@ package Vortex.Scenes
 
 		protected function goToIronswine():void
 		{
-			FInternet.GoToURL("http://www.google.com");
+			FInternet.GoToURL("http://www.ironswine.com");
 		}
 
 		protected function transition(oldScene:FScene, newScene:FScene, loc:Number):void
