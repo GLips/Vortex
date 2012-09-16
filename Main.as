@@ -5,6 +5,8 @@ package Vortex
 
 	import flash.utils.getTimer;
 
+	import flash.events.*;
+
 	import Framework.FG;
 	import Framework.FGame;
 	import Framework.Utils.FInternet;
@@ -17,14 +19,15 @@ package Vortex
 
 	public class Main extends FGame
 	{
-		public static var _mochiads_game_id:String = "90218f200617680c";
 
 		public function Main():void
 		{
 			FG.gameURL = "www.ironswine.com/play/270/Vortex";
 			FG.gameName = "Vortex";
 
-			allowedURLs = new Array("ironswine.com", "fgl.com", "flashgamelicense.com", "encodable.com");
+			FG._mochiads_game_id = "90218f200617680c";
+
+			//allowedURLs = new Array("ironswine.com", "fgl.com", "flashgamelicense.com", "encodable.com");
 
 			super(this, 640, 480, MainMenu);
 		}

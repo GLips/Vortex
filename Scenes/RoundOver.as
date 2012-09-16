@@ -28,6 +28,8 @@ package Vortex.Scenes
 
 	import Vortex.Global;
 
+	import mochi.as3.*;
+
 	public class RoundOver extends GeneralScene
 	{
 		[Embed(source="../Sounds/explosion.mp3")]
@@ -139,17 +141,26 @@ package Vortex.Scenes
 			b.CenterX().CenterY();
 			Add(b);
 
-			var a:FRectButton = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
+			var a:FRectButton;
+
+			if(b_newHighScore)
+				
+
+			a = new FRectButton(0, 0, 150, 40, "Submit Score", submitScore);
 			a.CenterX().CenterY(100);
 			Add(a);
 
-			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
+			a = new FRectButton(0, 0, 150, 40, "Play More Games", goToIronswine);
 			a.CenterX().CenterY(150);
 			Add(a);
 
-			a = new FRectButton(0, 0, 150, 40, "Main Menu", mainMenu);
+			a = new FRectButton(0, 0, 150, 40, "Clear Data", Global.Clear);
 			a.CenterX().CenterY(200);
 			Add(a);
+
+			/*a = new FRectButton(0, 0, 150, 40, "Main Menu", mainMenu);
+			a.CenterX().CenterY(200);
+			Add(a);*/
 
 			t_HighScore = new FText(FG.width / 4, FG.height/4, "High Score:");
 			t_HighScore.textAlign = FText.ALIGN_CENTER;
@@ -231,6 +242,14 @@ package Vortex.Scenes
 		protected function startGame():void
 		{
 			FG.SwitchScene(new Game());
+		}
+
+		protected function submitScore():void
+		{
+			trace("HI");
+			var o:Object = { n: [3, 9, 3, 8, 10, 15, 6, 10, 5, 9, 11, 4, 1, 6, 3, 15], f: function (i:Number,s:String):String { if (s.length == 16) return s; return this.f(i+1,s + this.n[i].toString(16));}};
+			var boardID:String = o.f(0,"");
+			MochiScores.showLeaderboard({boardID: boardID, score: Global.highScore});
 		}
 	}
 }

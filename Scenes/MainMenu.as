@@ -26,6 +26,8 @@ package Vortex.Scenes
 	import Vortex.Scenes.Game;
 	import Vortex.Scenes.ParticleTest;
 
+	import mochi.as3.*;
+
 	public class MainMenu extends GeneralScene
 	{
 		private var numToAdd:int;
